@@ -1,4 +1,11 @@
 {
+  "name": "quantajs",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/main.js"
+  },
   "devDependencies": {
     "typescript": "^5.6.3"
   }

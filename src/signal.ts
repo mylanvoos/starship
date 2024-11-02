@@ -26,7 +26,7 @@ export class Signal<T = any> {
         })
     }
     // getter and setter
-    get value(): T { return this.value }
+    get value(): T { return this._value }
 
     set(setter: T | ((currentValue: T) => T)) {
         const newValue = typeof setter === "function" ? (setter as Function)(this.value) : setter 
