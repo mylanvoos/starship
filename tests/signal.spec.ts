@@ -1,5 +1,5 @@
 import test, { expect } from '@playwright/test'
-import { Signal } from '../src/signal'
+import { Signal } from '../src/reactivity/signal'
 
 test.describe('Signal Class', () => {
 
