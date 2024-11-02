@@ -7,3 +7,9 @@ nestedSignal.set((prev) => ({
     ...prev,
     a: { ...prev.a, b: 5 }
 }))
+console.log(nestedSignal.value.a)
+
+const countSignal = new Signal(0)
+countSignal.subscribe(() => console.log("Count has changed to:", countSignal.value))
+countSignal.subscribe(() => console.log("Also triggered"))
+countSignal.set(prev => prev + 1)

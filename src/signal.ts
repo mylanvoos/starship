@@ -1,6 +1,6 @@
-export class Signal<T = any> {
+export class Signal<T> {
     private _value: T
-    private dependency: Set<Function> = new Set()
+    private dependency: Set<(value: T) => void> = new Set()
 
     constructor(val: T) {
         this._value = this._makeReactive(val)
@@ -18,7 +18,7 @@ export class Signal<T = any> {
 
         return new Proxy(reactiveObj, {
             // when accessing a property, retrieves the value of the Signal (e.g., reactiveObj[prop].value)
-            get: (target, prop) => { return target[prop as keyof typeof target]?.value },
+            get: (target, prop) => target[prop as keyof typeof target],
             set: () => {
                 console.warn("Direct mutation is not allowed. Use set()")
                 return true
@@ -26,7 +26,24 @@ export class Signal<T = any> {
         })
     }
     // getter and setter
-    get value(): T { return this._value }
+    get value(): T { 
+        return this._unwrapValue(this._value)
+    }
+    private _unwrapValue(val: any): any {
+        if (val instanceof Signal) {
+            return val.value
+        } else if (Array.isArray(val)) {
+            return val.map(item => this._unwrapValue(item))
+        } else if (typeof val === 'object' && val !== null) {
+            const unwrappedObj: Record<string, any> = {}
+            for (const key in val) {
+            unwrappedObj[key] = this._unwrapValue(val[key])
+            }
+            return unwrappedObj
+        } else { 
+            return val
+        }
+    }
 
     set(setter: T | ((currentValue: T) => T)) {
         const newValue = typeof setter === "function" ? (setter as Function)(this.value) : setter 
