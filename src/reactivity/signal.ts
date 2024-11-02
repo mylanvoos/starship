@@ -1,6 +1,6 @@
 export class Signal<T> {
     private value: T
-    private observers = new Set<(value: T) => void>()
+    private subscribers = new Set<(value: T) => void>()
     private effects = new Map<string, { fn: Function, condition?: (value: T) => boolean}>()
 
     constructor(initialValue: T) {
@@ -15,9 +15,28 @@ export class Signal<T> {
 
         if (this.value !== resolved) {
             this.value = resolved
-            this.notifyAll()
+            this.notify()
         }
     }
-    
-    
+
+    subscribe(callback: (value: T) => void): () => void {
+        this.subscribers.add(callback)
+        return () => this.subscribers.delete(callback)
+    }
+    private notify(): void {
+        this.subscribers.forEach(callback => callback(this.value))
+
+        this.effects.forEach((effect, key) => {
+            if (!effect.condition || effect.condition(this.value)) {
+                effect.fn()
+            }
+        })
+    }
+    addEffect(key: string, fn: Function, condition?: (value: T) => boolean): void {
+        this.effects.set(key, { fn, condition })
+    }
+    removeEffects(key: string): void {
+        this.effects.delete(key)
+    }
 }
+
