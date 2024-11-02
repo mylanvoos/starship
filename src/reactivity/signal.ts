@@ -40,3 +40,20 @@ export class Signal<T> {
     }
 }
 
+declare global {
+    interface Function {
+        attach(signalKey: string, condition?: (value: any) => boolean): void
+    }
+}
+
+Function.prototype.attach = function(signalKey: string, condition?: (value: any) => boolean): void {
+    if (!window.currentContext) return
+    const signal = window.currentContext.signals[signalKey]
+    if (signal instanceof Signal) {
+        signal.addEffect(this.name, this, condition)
+    }
+}
+
+export function createSignal<T>(initialValue: T): Signal<T> {
+    return new Signal(initialValue)
+}
