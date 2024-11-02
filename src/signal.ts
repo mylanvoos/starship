@@ -1,61 +1,65 @@
 export class Signal<T> {
     private _value: T
-    private dependency: Set<(value: T) => void> = new Set()
+    private _observers = new Map<string, Set<(value: T) => any>>()
+    private _cache = new Map<string, any>() // stores computed values
 
-    constructor(val: T) {
-        this._value = this._makeReactive(val)
+    constructor(initialValue: T) {
+        this._value = initialValue
     }
-    private _makeReactive(obj: any): any {
-        if (typeof obj !== 'object' || obj === null) return obj
+    get(): T { return this._value }
 
-        // recursively make children elements reactive
-        if (Array.isArray(obj)) {
-            return obj.map(item => this._makeReactive(item))
+    getComputed(componentId: string, observerId: string): any {
+        const key = `${componentId}:${observerId}`
+        return this._cache.get(key)
+    }
+
+    set(newValue: T | ((currentValue: T) => T)): void {
+        const resolved = typeof newValue === 'function'
+            ? (newValue as (currentValue: T) => T)(this._value)
+            : newValue;
+
+        if (this._value !== resolved) {
+            this._value = resolved;
+            this.notifyAll();
         }
-
-        const reactiveObj: Record<string, any> = {}
-        for (const key in obj) reactiveObj[key] = new Signal(obj[key])
-
-        return new Proxy(reactiveObj, {
-            // when accessing a property, retrieves the value of the Signal (e.g., reactiveObj[prop].value)
-            get: (target, prop) => target[prop as keyof typeof target],
-            set: () => {
-                console.warn("Direct mutation is not allowed. Use set()")
-                return true
-            }
-        })
     }
-    // getter and setter
-    get value(): T { 
-        return this._unwrapValue(this._value)
-    }
-    private _unwrapValue(val: any): any {
-        if (val instanceof Signal) {
-            return val.value
-        } else if (Array.isArray(val)) {
-            return val.map(item => this._unwrapValue(item))
-        } else if (typeof val === 'object' && val !== null) {
-            const unwrappedObj: Record<string, any> = {}
-            for (const key in val) {
-            unwrappedObj[key] = this._unwrapValue(val[key])
-            }
-            return unwrappedObj
-        } else { 
-            return val
+    
+    bind(componentId: string, callback: (value: T) => any, observerId?: string): void {
+        if (!this._observers.has(componentId)) {
+            this._observers.set(componentId, new Set())
+        }
+        this._observers.get(componentId)!.add(callback)
+
+        if (observerId) {
+            const result = callback(this._value)
+            this._cache.set(`${componentId}:${observerId}`, result)
         }
     }
 
-    set(setter: T | ((currentValue: T) => T)) {
-        const newValue = typeof setter === "function" ? (setter as Function)(this.value) : setter 
-        this._value = this._makeReactive(newValue)
-        this.notify()
+    unbind(componentId: string): void {
+        this._observers.delete(componentId)
+        for (const key of this._cache.keys()) {
+            if (key.startsWith(`${componentId}`)) {
+                this._cache.delete(key)
+            }
+        }
     }
+    private notifyAll(): void {
+        for (const [componentId, observers] of this._observers.entries()) {
+            observers.forEach(callback => {
+                const result = callback(this._value)
 
-    subscribe(callback: Function) { this.dependency.add(callback) }
-
-    unsubscribe(callback: Function) { this.dependency.delete(callback) }
-
-    notify() {
-        this.dependency.forEach(callback => callback())
+                if (result !== undefined) {
+                    const observerEntries = Array.from(this._cache.entries())
+                    const observerId = observerEntries.find(
+                        ([key, val]) => key.startsWith(`${componentId}:`) && val === result
+                    )?.[0]?.split(':')[1]
+                    if (observerId) {
+                        this._cache.set(`${componentId}:${observerId}`, result)
+                    }
+                }
+                
+            })
+        }
     }
 }
