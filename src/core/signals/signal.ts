@@ -21,11 +21,3 @@ export class Signal<T> {
     }
     
 }
-
-export function createSignal<T>(initialValue: T): [T, (newValue: T) => void, (listener: Function) => void] {
-    const signal = new Signal(initialValue)
-    const getValue = () => signal.get()
-    const setValue = (newValue: T) => signal.set(newValue)
-    const attachTo = (listener: Function) => { signal.attach(listener) }
-    return [getValue(), setValue, attachTo]
-}
