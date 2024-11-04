@@ -1,10 +1,11 @@
 // A global, centralised store to maintain a map/object of all signals
+// Store is encapsulated within store.ts and is only accessible via createSignal
 
 import { Sentry } from "./sentry";
 import { Signal } from "./signal";
 
 
-export class Store {
+class Store {
     private signals: Map<number, Signal<any>> = new Map()
     private index: number  = 0
     private sentry: Sentry = new Sentry()
@@ -28,3 +29,11 @@ export class Store {
         return [getter, setter, attacher]
     }
 }
+
+// Exporting createSignal so it can be used globally without exposing Store
+const storeInstance = new Store()
+export const createSignal: <T>(initialValue?: T) => [
+    getter: () => T,
+    setter: (newValue: T) => void,
+    attacher: (listener: Function) => void
+] = storeInstance.createSignal.bind(storeInstance)

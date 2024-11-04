@@ -1,17 +1,17 @@
-import { Store } from "./core/reactivity/store";
+import { createSignal } from "./core/reactivity/store"
 
-const store = new Store()
+const [counter, setCounter, attachToCounter] = createSignal<number>(0)
+const [command, setCommand, attachToCommand] = createSignal<string>("")
 
-const [counter, setCounter, attach] = store.createSignal<number>(0)
-
-console.log(counter())
 setCounter(5)
 console.log(counter())
 
-attach(() => console.log("Counter changed:", counter()))
-attach(() => console.log("Performing addition upon counter change:", adder(counter(), 6)))
-
-function adder(a: number, b: number): number { return a + b }
+attachToCounter(() => console.log("Counter changed:", counter()))
+attachToCommand(() => {
+    console.log("A command was given.")
+    if (command() === "Reset counter!") setCounter(0)
+    if (command() === "Counter to 5!") setCounter(5)
+})
 
 setCounter(10)
-setCounter(20)
+setCommand("Reset counter!")
