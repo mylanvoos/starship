@@ -11,7 +11,7 @@ class Store {
     private sentry: Sentry = new Sentry()
     
     createSignal<T>(initialValue?: T): [
-        getter: () => T,
+        getter: Getter<T>,
         setter: Setter<T>,
         attacher: (listener: Function) => void
     ] {
@@ -22,7 +22,12 @@ class Store {
 
         const signal = this.signals.get(localIndex)!
 
-        const getter = () => signal.get()
+        // dynamic getter
+        const getter: Getter<T> = {
+            get value() {
+                return signal.get()
+            }
+        }
         const setter: Setter<T> = ((...args: any[]) => {
             if (args.length === 1) {
                 const newValue: T = args[0]
@@ -53,6 +58,10 @@ type Setter<T> = {
     (pred: any, cases: MatchCase<any, T>[]): void
 }
 
+type Getter<T> = {
+    value: T
+}
+
 export const _ = Symbol('wildcard')
 
 // syntactic wrappers
@@ -74,7 +83,7 @@ type MatchCase<T, R> = [Pattern<T>, R]
 // Exporting createSignal so it can be used globally without exposing Store
 const storeInstance = new Store()
 export const createSignal: <T>(initialValue?: T) => [
-    getter: () => T,
+    getter: Getter<T>,
     setter: Setter<T>,
     attacher: (listener: Function) => void
 ] = storeInstance.createSignal.bind(storeInstance)

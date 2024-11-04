@@ -20,11 +20,11 @@ Inspired by Rust, Starship lets you do pattern matching in its signal setters or
 const [counter, setCounter, attachToCounter] = createSignal<number>(0)
 const [message, setMessage, attachToMessage] = createSignal<string>('')
 
-attachToCounter(() => setMessage(counter(), [
+attachToCounter(() => setMessage(counter.value, [
     [ when(v => v >= 10 || v <= -10), effect("Cannot exceed +=10!") ],
     [ when(v => v === 0), effect("Press a button to get started.")] ,
-    [ _, effect(`Counter: ${counter()}`) ]
+    [ _, effect(`Counter: ${counter.value}`) ]
 ]))
 
-attachToMessage(() => p.textContent = message())
+attachToMessage(() => p.textContent = message.value)
 ```

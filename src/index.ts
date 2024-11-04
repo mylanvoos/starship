@@ -17,22 +17,22 @@ export class App implements Component {
         buttonDcr.textContent = "Decrement"
         buttonRst.textContent = 'Reset'
 
-        p.textContent = `Count: ${counter()}`
+        p.textContent = `Count: ${counter.value}`
         
-        buttonIcr.onclick = () => setCounter(counter() + 1) 
-        buttonDcr.onclick = () => setCounter(counter() - 1)
+        buttonIcr.onclick = () => setCounter(counter.value + 1) 
+        buttonDcr.onclick = () => setCounter(counter.value - 1)
         buttonRst.onclick = () => { 
             setCounter(0)
             div.removeChild(buttonRst)
         }
 
-        attachToCounter(() => setMessage(counter(), [
+        attachToCounter(() => setMessage(counter.value, [
             [ when(v => v >= 10 || v <= -10), effect("Cannot exceed +=10!") ],
             [ when(v => v === 0), effect("Press a button to get started.")] ,
-            [ _, effect(`Counter: ${counter()}`) ]
+            [ _, effect(`Counter: ${counter.value}`) ]
         ]))
 
-        attachToMessage(() => p.textContent = message())
+        attachToMessage(() => p.textContent = message.value)
 
         div.appendChild(buttonIcr)
         div.appendChild(buttonDcr)
