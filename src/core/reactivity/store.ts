@@ -1,11 +1,13 @@
 // A global, centralised store to maintain a map/object of all signals
 
+import { Sentry } from "./sentry";
 import { Signal } from "./signal";
 
 
 export class Store {
     private signals: Map<number, Signal<any>> = new Map()
     private index: number  = 0
+    private sentry: Sentry = new Sentry()
     
     createSignal<T>(initialValue?: T): [
         getter: () => T,
@@ -14,12 +16,14 @@ export class Store {
     ] {
         const localIndex = this.index // freeze index to make setters work
 
-        if (!this.signals.has(localIndex)) this.signals.set(localIndex, new Signal<T>(initialValue))
+        if (!this.signals.has(localIndex)) this.signals.set(localIndex, new Signal<T>(initialValue, localIndex, this.sentry))
         this.index++
 
-        const getter = () => this.signals.get(localIndex)?.get()
-        const setter = (newState: T) => this.signals.get(localIndex)?.set(newState)
-        const attacher = (listener: Function) => this.signals.get(localIndex)?.attach(listener) 
+        const signal = this.signals.get(localIndex)!
+
+        const getter = () => signal.get()
+        const setter = (newState: T) => signal.set(newState)
+        const attacher = (listener: Function) => signal.sentry.assign(localIndex, listener)
 
         return [getter, setter, attacher]
     }
