@@ -1,13 +1,20 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "CommonJS",
+    "module": "ESNext",
     "moduleResolution": "Node",
-    "jsx": "preserve",
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/core/framework/types"
+    ]
   },
-  "include": ["src"]
+  "include": ["src", "src/core/framework/types/**/*" ]
 }

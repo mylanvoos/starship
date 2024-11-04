@@ -1,7 +1,7 @@
 // A global, centralised store to maintain a map/object of all signals
 // Store is encapsulated within store.ts and is only accessible via createSignal
 
-import { match } from "../framework/framework";
+import { match, _, MatchCase } from "../framework/framework";
 import { Sentry } from "./sentry";
 import { Signal } from "./signal";
 
@@ -61,24 +61,6 @@ type Setter<T> = {
 type Getter<T> = {
     value: T
 }
-
-export const _ = Symbol('wildcard')
-
-// syntactic wrappers
-export function when<T>(predicate: (value: T) => boolean) {
-    return { predicate }
-}
-export function effect<T>(value: T)  {
-    return value
-}
-
-type Pattern<T> = 
-    | T // literal
-    | { predicate: (value: T) => boolean } // conditional
-    | typeof _ // wildcard
-
-type MatchCase<T, R> = [Pattern<T>, R]
-
 
 // Exporting createSignal so it can be used globally without exposing Store
 const storeInstance = new Store()

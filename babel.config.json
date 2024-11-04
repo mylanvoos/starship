@@ -1,0 +1,11 @@
+{
+    "presets": ["@babel/preset-typescript"],
+    "plugins": [
+      ["@babel/plugin-transform-react-jsx", {
+        "pragma": "h", // JSX factory function
+        "pragmaFrag": "Fragment", // fragment support
+        "runtime": "automatic",
+        "importSource": "starshipjs"
+      }]
+    ]
+  }

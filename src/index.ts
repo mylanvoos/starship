@@ -1,8 +1,9 @@
 import { Component, Container } from "./core/dom/container"
 import { effect, match, when, _ } from "./core/framework/framework"
 import { createSignal } from "./core/reactivity/store"
+import App from './App.uss'
 
-export class App implements Component {
+export class AppDemo implements Component {
     render(): HTMLElement {
         const [counter, setCounter, attachToCounter] = createSignal<number>(0)
         const [message, setMessage, attachToMessage] = createSignal<string>('')

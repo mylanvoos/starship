@@ -1,5 +1,5 @@
 {
-  "name": "quantajs",
+  "name": "starshipjs",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
@@ -7,16 +7,23 @@
     "build": "tsc && vite build",
     "start": "tsc && vite",
     "tsc": "npx ts-node src/index.ts",
+    "babel": "babel src --out-dir dist",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/plugin-transform-react-jsx": "^7.25.9",
+    "@babel/preset-typescript": "^7.26.0",
     "@playwright/test": "^1.48.2",
     "@types/node": "^22.8.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "vite": "^5.4.10",
+    "vite-plugin-babel": "^1.2.0"
   },
   "dependencies": {
-    "quantajs": "file:"
+    "@babel/cli": "^7.25.9",
+    "@babel/preset-env": "^7.26.0",
+    "starshipjs": "file:"
   }
 }
