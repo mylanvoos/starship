@@ -16,7 +16,8 @@ We use a similar approach here. The addition of the attacher function allows you
 
 Inspired by Rust, Starship lets you do pattern matching in its signal setters or using the `match()` function.
 
-`const [counter, setCounter, attachToCounter] = createSignal<number>(0)
+```
+const [counter, setCounter, attachToCounter] = createSignal<number>(0)
 const [message, setMessage, attachToMessage] = createSignal<string>('')
 
 attachToCounter(() => setMessage(counter(), [
@@ -24,5 +25,6 @@ attachToCounter(() => setMessage(counter(), [
     [ when(v => v === 0), effect("Press a button to get started.")] ,
     [ _, effect(`Counter: ${counter()}`) ]
 ]))
+```
 
 attachToMessage(() => p.textContent = message())`
