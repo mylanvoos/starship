@@ -1,6 +1,6 @@
 ### Starship.js - Yet another JavaScript framework ###
 
-This is an experiment in making a frontend framework that is *reactive*, can *manage the application state* and *manipulate the DOM*, and has a *component-based architecture*.
+This is an experiment in making a frontend framework that is *reactive*, can *manage the application state* and *manipulate the DOM*, and has a *component-based architecture*. It also has a little bit of (optional) functional programming.
 
 Inspired by React, Vue, and Solid.js
 

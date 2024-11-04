@@ -1,4 +1,5 @@
 import { Component, Container } from "./core/dom/container"
+import { effect, match, when, _ } from "./core/framework/framework"
 import { createSignal } from "./core/reactivity/store"
 
 export class App implements Component {
@@ -18,6 +19,7 @@ export class App implements Component {
 
         p.textContent = `Count: ${counter()}`
 
+        
         buttonIcr.onclick = () => setCounter(counter() + 1) 
         buttonDcr.onclick = () => setCounter(counter() - 1)
         buttonRst.onclick = () => { 
@@ -25,18 +27,13 @@ export class App implements Component {
             div.removeChild(buttonRst)
         }
 
-        attachToCounter(() => {
-            if (counter() >= 10 || counter() <= -10) {
-                setMessage(`Cannot exceed +=10`)
-                div.appendChild(buttonRst)
-            }
-            else {
-                setMessage(`Count: ${counter()}`)
-            }
-        })
+        attachToCounter(() => setMessage(match(counter(), [
+            [when((v) => v >= 10 || v <= -10), effect("Cannot exceed +=10!")],
+            [when((v) => v === 0), effect("Press a button to get started.")],
+            [_, effect(`Counter: ${counter()}`)]
+        ])))
+
         attachToMessage(() => p.textContent = message())
-        
-        
 
         div.appendChild(buttonIcr)
         div.appendChild(buttonDcr)

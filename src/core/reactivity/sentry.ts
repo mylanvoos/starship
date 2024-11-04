@@ -11,7 +11,6 @@ export class Sentry {
         if (this.listeners.has(signalId)) {
             const signalListeners = this.listeners.get(signalId)
             for (const listener of signalListeners) {
-                 
                 listener()
             }
         }
