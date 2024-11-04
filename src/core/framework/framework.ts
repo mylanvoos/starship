@@ -1,35 +1,27 @@
-// takes in the element type, props, and children, then returns a virtual DOM representation
-export function h(
-    type: string | Function,
-    props: Record<string, any> | null,
-    ...children: any[]
-): HTMLElement {
-    if (typeof type === 'string') {
-        const element = document.createElement(type)
-
-        if (props) {
-            Object.entries(props).forEach(([key, value]) => {
-                if (key.startsWith('on')) {
-                    element.addEventListener(key.toLowerCase().slice(2), value)
-                } else {
-                    element.setAttribute(key, value)
-                }
-            })
-        }
-
-        children.flat().forEach(child => {
-            if (typeof child === 'string' || typeof child === 'number') {
-                element.appendChild(document.createTextNode(child.toString()))
-            } else if (child instanceof HTMLElement) {
-                element.appendChild(child)
-            }
-        })
-
-        return element
+export function h(tag: string | Function, props: any, ...children: any[]): HTMLElement {
+    if (typeof tag === 'function') {
+      return tag(props);
     }
-
-    return type({ ...props, children })
-}
+  
+    const element = document.createElement(tag);
+  
+    for (const name in props) {
+      if (name.startsWith('on') && typeof props[name] === 'function') {
+        element.addEventListener(name.slice(2).toLowerCase(), props[name]);
+      } else {
+        element.setAttribute(name, props[name]);
+      }
+    }
+  
+    for (const child of children) {
+      element.appendChild(
+        child instanceof Node ? child : document.createTextNode(child)
+      );
+    }
+  
+    return element;
+  }
+  
 
 export const _ = Symbol('wildcard')
 

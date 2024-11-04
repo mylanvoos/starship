@@ -1,6 +1,31 @@
+<!-- App.uss -->
 <template>
-  <div>
-    <h1>Hello World</h1>
-    <p>Testing Template Syntax</p>
+  <div class="container">
+    <header>
+      <h1 class="title">My App</h1>
+      <nav>
+        {counter.value}
+        <button onClick={() => setCounter(counter.value + 2)}>
+          Increment
+        </button>
+        <button onClick={() => setCounter(counter.value - 2)}>
+          Decrement
+        </button>
+      </nav>
+    </header>
+    <main>
+      <p>Welcome to my framework!</p>
+      <p>{message.value}</p>
+    </main>
   </div>
 </template>
+
+<script>
+import { effect, match, when, _ } from "./core/framework/framework";
+import { createSignal } from "./core/reactivity/store";
+
+const [counter, setCounter, attachToCounter] = createSignal<number>(0)
+const [message, setMessage, attachToMessage] = createSignal<string>('')
+
+console.log("Hi hello")
+</script>
