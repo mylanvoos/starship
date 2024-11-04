@@ -1,4 +1,4 @@
-### Cabbage.js - Yet another JavaScript framework ###
+### Starship.js - Yet another JavaScript framework ###
 
 This is an experiment in making a frontend framework that is *reactive*, can *manage the application state* and *manipulate the DOM*, and has a *component-based architecture*.
 

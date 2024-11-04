@@ -17,6 +17,4 @@ export class Signal<T> {
             this.sentry.notify(this.id, newVal)
         }
     }
-
-    
 }

@@ -4,7 +4,6 @@
 import { Sentry } from "./sentry";
 import { Signal } from "./signal";
 
-
 class Store {
     private signals: Map<number, Signal<any>> = new Map()
     private index: number  = 0
@@ -13,7 +12,7 @@ class Store {
     createSignal<T>(initialValue?: T): [
         getter: () => T,
         setter: (newValue: T) => void,
-        attacher: (listener: Function) => void
+        attacher: (listener: Function, condition?: (Function) => boolean) => void
     ] {
         const localIndex = this.index // freeze index to make setters work
 
@@ -28,6 +27,11 @@ class Store {
 
         return [getter, setter, attacher]
     }
+
+    reset() {
+        // reset index for rerendering
+        this.index = 0
+    }
 }
 
 // Exporting createSignal so it can be used globally without exposing Store
@@ -37,3 +41,5 @@ export const createSignal: <T>(initialValue?: T) => [
     setter: (newValue: T) => void,
     attacher: (listener: Function) => void
 ] = storeInstance.createSignal.bind(storeInstance)
+
+export const resetStore = storeInstance.reset.bind(storeInstance)
