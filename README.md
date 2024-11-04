@@ -25,6 +25,6 @@ attachToCounter(() => setMessage(counter(), [
     [ when(v => v === 0), effect("Press a button to get started.")] ,
     [ _, effect(`Counter: ${counter()}`) ]
 ]))
-```
 
-attachToMessage(() => p.textContent = message())`
+attachToMessage(() => p.textContent = message())
+```
