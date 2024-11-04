@@ -2,5 +2,6 @@
   <div>
     <h1>Hello World</h1>
     <p>Testing Template Syntax</p>
+    <p>One two three four five</p>
   </div>
 </template>
