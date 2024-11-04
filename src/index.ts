@@ -18,7 +18,6 @@ export class App implements Component {
         buttonRst.textContent = 'Reset'
 
         p.textContent = `Count: ${counter()}`
-
         
         buttonIcr.onclick = () => setCounter(counter() + 1) 
         buttonDcr.onclick = () => setCounter(counter() - 1)
@@ -27,11 +26,11 @@ export class App implements Component {
             div.removeChild(buttonRst)
         }
 
-        attachToCounter(() => setMessage(match(counter(), [
-            [when((v) => v >= 10 || v <= -10), effect("Cannot exceed +=10!")],
-            [when((v) => v === 0), effect("Press a button to get started.")],
-            [_, effect(`Counter: ${counter()}`)]
-        ])))
+        attachToCounter(() => setMessage(counter(), [
+            [ when(v => v >= 10 || v <= -10), effect("Cannot exceed +=10!") ],
+            [ when(v => v === 0), effect("Press a button to get started.")] ,
+            [ _, effect(`Counter: ${counter()}`) ]
+        ]))
 
         attachToMessage(() => p.textContent = message())
 
