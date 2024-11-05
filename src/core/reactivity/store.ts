@@ -61,10 +61,22 @@ type Setter<T> = {
 // Exporting createSignal so it can be used globally without exposing Store
 const storeInstance = new Store()
 export const createSignal: <T>(initialValue?: T) => [
-    getter: Signal<T>,
+    getter: SignalGuard<T>,
     setter: Setter<T>,
     attacher: (listener: Function) => void
 ] = storeInstance.createSignal.bind(storeInstance)
 
 export const isSignal: (object: any) => boolean = storeInstance.isSignal.bind(storeInstance)
 export const resetStore = storeInstance.reset.bind(storeInstance)
+
+
+
+// Keeping track of the current computation being executed
+const computationContext = { current: null as Function | null };
+
+export function getCurrentComputation() {
+    return computationContext.current
+}
+export function setCurrentComputation(computation: Function | null) {
+    computationContext.current = computation
+}

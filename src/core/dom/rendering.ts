@@ -1,4 +1,5 @@
-import { isSignal } from "../reactivity/store";
+import { SignalGuard } from "@core/reactivity/signal";
+import { isSignal, setCurrentComputation } from "../reactivity/store";
 
 export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
   if (tag instanceof Node) {
@@ -51,10 +52,20 @@ export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
 export const Fragment = (props: { children: any[] }) => props.children
 
 // Checks if when is a signal and assigns update to its listeners in Sentry
-export function Show(props: { when: any; children: any[] }): Comment {
+export function Show(props: { when: (() => boolean) | SignalGuard<boolean>; children: any[] }): Comment {
     const { when, children } = props
     const container = document.createComment("Show")
     let currentChildNodes: Node[] = []
+
+    const evaluateWhen = () => {
+      if (typeof when === 'function') {
+        return when()
+      } else if (when instanceof SignalGuard) {
+        return when.value
+      } else { 
+        return Boolean(when)
+      }
+    }
 
     const update = () => {
         const parent = container.parentNode;
@@ -62,9 +73,9 @@ export function Show(props: { when: any; children: any[] }): Comment {
     
         currentChildNodes.forEach((child) => parent.removeChild(child));
         currentChildNodes = [];
-    
+
         // conditional rendering
-        if (isSignal(when) ? when.value : when) {
+        if (evaluateWhen()) {
             children.flat().forEach((child) => {
                 function appendChild(node) {
                     if (node == null || node === false) return;
@@ -102,10 +113,15 @@ export function Show(props: { when: any; children: any[] }): Comment {
             });
         }
     };
-    
 
-    if (isSignal(when)) {
-        when.signal.sentry.assign(when.signal.id, update)
+    if (when instanceof SignalGuard) {
+      when.signal.sentry.assign(when.signal.id, update)
+    } else if (typeof when === 'function') {
+      // start tracking, then eval 'when' once so that any signals accessed will register `update` as a listener
+      // only signals accessed during the evaluation of `when` are tracked
+      setCurrentComputation(update)
+      evaluateWhen()
+      setCurrentComputation(null)
     }
 
     update()
