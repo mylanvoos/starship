@@ -5,14 +5,14 @@
   <div class="container">
       <h1 class="title">Starship 🛰️</h1>
       <p>The classic button experiment to test reactivity...</p>
-        <button onClick={() => setCounter(counter.value + 1)}>
-          +1
-        </button>
-        {counter}
         <button onClick={() => setCounter(counter.value - 1)}>
           -1
         </button>
-      <p>{message}</p>
+        { counter }
+        <button onClick={() => setCounter(counter.value + 1)}>
+          +1
+        </button>
+      <p>{ message }</p>
   </div>
 </template>
 
@@ -24,12 +24,16 @@ const [counter, setCounter, attachToCounter] = createSignal<number>(0);
 const [message, setMessage, attachToMessage] = createSignal<string>("");
 
 attachToCounter(() => setMessage(counter.value, [
-  [ when(v => v >= 10 || v <= -10), effect("Cannot exceed +=10!") ],
+  [ when(v => v > 10 || v < -10), effect(() => {
+    setCounter(0)
+    return "Cannot exceed +=10!"
+  }) ],
   [ when(v => v === 0), effect("Press a button to get started.")],
   [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
   [ _, effect(`Keep pressing...`) ]
 ]))
 </script>
+
 ```
 
 This is an experiment in making a frontend framework that is *reactive*, can *manage the application state* and *manipulate the DOM*, and has a *component-based architecture*. 
@@ -60,6 +64,8 @@ attachToCounter(() => setMessage(counter.value, [
 ]))
 ```
 
-### Vue-like syntax
-`<template>`, `<script>`, and `<style>` here! A custom Vite plugin was needed to make this work. By default, `<template>` uses JSX and `<script>` uses TypeScript
+### Vue-like syntax 
+`<template>`, `<script>`, and `<style>` here! A custom Vite plugin was needed to make this work. By default, `<template>` uses JSX and `<script>` uses TypeScript.
+
+
 

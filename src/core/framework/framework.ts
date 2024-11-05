@@ -1,6 +1,6 @@
-import { Signal, SignalGuard } from "../reactivity/signal";
 import { isSignal } from "../reactivity/store";
 
+// Rendering
 export function h(tag: any, props: any, ...children: any[]): HTMLElement {
     if (typeof tag === 'function') {
       return tag({ ...props, children });
@@ -27,8 +27,6 @@ export function h(tag: any, props: any, ...children: any[]): HTMLElement {
         child.forEach(appendChild) // recursive
 
       } else if (isSignal(child)) {
-
-        // TODO: Sort this out properly
         const textNode = document.createTextNode(child.value)
         element.appendChild(textNode)
         child.signal.sentry.assign(child.signal.id, () => textNode.textContent = child.value)
@@ -48,12 +46,13 @@ export function h(tag: any, props: any, ...children: any[]): HTMLElement {
 
 export const Fragment = (props: { children: any[] }) => props.children
 
+// Pattern matching
 
 export const _ = Symbol('wildcard')
 
 // syntactic wrappers
 export function when(predicate: (value: any) => boolean) {
-    return { predicate }
+    return predicate 
 }
 export function effect<T>(value: T)  {
     return value
@@ -68,17 +67,18 @@ export type MatchCase<T, R> = [Pattern<T>, R]
 
 export function match<T, R>(value: T, cases: MatchCase<T, R>[]): R {
     for (const [pattern, result] of cases) {
-        if (pattern === _) {
-            return typeof result === 'function' ? result() : result
-        } else if (typeof pattern === 'object' && 'predicate' in pattern) {
-            if (pattern.predicate(value)) {
-                return typeof result === 'function' ? result() : result;
-            }
-        } else {
-            if (value === pattern) {
-                return typeof result === 'function' ? result() : result;
-            }
-        }
+      let isMatch = false
+      if (pattern === _) {
+          isMatch = true
+      } else if (typeof pattern === 'function') {
+          isMatch = (pattern as (value: T) => boolean)(value)
+      } else {
+          isMatch = value === pattern
+      }
+
+      if (isMatch) {
+          return typeof result === 'function' ? (result as () => R)() : result
+      }
     }
     throw new Error('No match found')
 }

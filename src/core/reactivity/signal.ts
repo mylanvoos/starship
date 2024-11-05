@@ -28,6 +28,6 @@ export class SignalGuard<T> {
         this.signal = signal
     }
     toString(): string {
-        return this.signal.get().toString()
+        return this.value.toString()
     }
 }
