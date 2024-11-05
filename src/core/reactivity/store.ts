@@ -58,14 +58,10 @@ type Setter<T> = {
     (pred: any, cases: MatchCase<any, T>[]): void
 }
 
-type Getter<T> = {
-    value: T
-}
-
 // Exporting createSignal so it can be used globally without exposing Store
 const storeInstance = new Store()
 export const createSignal: <T>(initialValue?: T) => [
-    getter: Getter<T>,
+    getter: Signal<T>,
     setter: Setter<T>,
     attacher: (listener: Function) => void
 ] = storeInstance.createSignal.bind(storeInstance)

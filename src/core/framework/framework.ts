@@ -26,6 +26,8 @@ export function h(tag: any, props: any, ...children: any[]): HTMLElement {
         child.forEach(appendChild) // recursive
 
       } else if (isSignal(child)) {
+
+        // TODO: Sort this out properly
         const textNode = document.createTextNode(child.value)
         element.appendChild(textNode)
         child.sentry.assign(child.id, () => textNode.textContent = child.value)

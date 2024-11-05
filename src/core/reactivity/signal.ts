@@ -1,5 +1,7 @@
 import { Sentry } from "./sentry"
 
+// TODO: Value protection to prevent directly modifying value
+
 export class Signal<T> {
     private value: T
     readonly id: number

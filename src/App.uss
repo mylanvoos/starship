@@ -1,20 +1,15 @@
 <template>
   <div class="container">
-    <header>
-      <h1 class="title">My App</h1>
-      <nav>
-        <button onClick={() => setCounter(counter.value + 2)}>
-          Increment
+      <h1 class="title">Starship 🛰️</h1>
+      <p>The classic button experiment to test reactivity...</p>
+        <button onClick={() => setCounter(counter.value + 1)}>
+          +1
         </button>
-        <button onClick={() => setCounter(counter.value - 2)}>
-          Decrement
+        {counter}
+        <button onClick={() => setCounter(counter.value - 1)}>
+          -1
         </button>
-      </nav>
-    </header>
-    <main>
-      <p>Welcome to my framework!</p>
       <p>{message}</p>
-    </main>
   </div>
 </template>
 
@@ -27,7 +22,8 @@ const [message, setMessage, attachToMessage] = createSignal<string>("");
 
 attachToCounter(() => setMessage(counter.value, [
   [ when(v => v >= 10 || v <= -10), effect("Cannot exceed +=10!") ],
-  [ when(v => v === 0), effect("Press a button to get started.")] ,
-  [ _, effect(`Counter: ${counter.value}`) ]
+  [ when(v => v === 0), effect("Press a button to get started.")],
+  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
+  [ _, effect(`Keep pressing...`) ]
 ]))
 </script>
