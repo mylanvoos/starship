@@ -2,23 +2,28 @@
   <div class="container">
       <h1 class="title">Starship 🛰️</h1>
       <p>The classic button experiment to test reactivity...</p>
-        <button onClick={() => setCounter(counter.value - 1)}>
-          -1
-        </button>
+        <button onClick={() => setCounter(counter.value - 1)}> -1 </button>
         { counter }
-        <button onClick={() => setCounter(counter.value + 1)}>
-          +1
-        </button>
-      <p>{message}</p>
+        <button onClick={() => setCounter(counter.value + 1)}> +1 </button>
+        <button onClick={() => setVoyagerThreshold(counter.value)}> Set Voyager threshold </button>
+      <p>{ message }</p>
+      <p>{ voyagerThreshold }</p>
+      <p>{ voyager }</p>
+      <Show when={voyager}>
+        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg/800px-The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg' />
+      </Show>
   </div>
 </template>
 
 <script>
-import { effect, match, when, _ } from "./core/framework/framework";
-import { createSignal } from "./core/reactivity/store";
+import { effect, match, when, _ } from "./core/framework/framework"
+import { createSignal } from "./core/reactivity/store"
+import { Show } from "./core/dom/rendering"
 
-const [counter, setCounter, attachToCounter] = createSignal<number>(0);
-const [message, setMessage, attachToMessage] = createSignal<string>("");
+const [counter, setCounter, attachToCounter] = createSignal<number>(0)
+const [message, setMessage] = createSignal<string>("")
+const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(7)
+const [voyager, setVoyagerDisplay] = createSignal<boolean>(false)
 
 attachToCounter(() => setMessage(counter.value, [
   [ when(v => v > 10 || v < -10), effect(() => {
@@ -30,4 +35,30 @@ attachToCounter(() => setMessage(counter.value, [
   [ _, effect(`Keep pressing...`) ]
 ]))
 
+attachToCounter(() => {
+  if (voyagerThreshold.value === counter.value) setVoyagerDisplay(true)
+  else setVoyagerDisplay(false)
+})
+
+attachToThreshold(() => { 
+  console.log("Equal?", voyagerThreshold.value === counter.value)
+
+  if (voyagerThreshold.value === counter.value) setVoyagerDisplay(true)
+  else setVoyagerDisplay(false)
+})
 </script>
+
+<style>
+body {
+  font-family: "Lucida Console";
+  font-size: 16px;
+  width: 500px;
+  margin: auto;
+}
+button {
+  margin: 0 20px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+}
+</style>

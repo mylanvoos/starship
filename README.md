@@ -21,7 +21,7 @@ import { effect, match, when, _ } from "./core/framework/framework";
 import { createSignal } from "./core/reactivity/store";
 
 const [counter, setCounter, attachToCounter] = createSignal<number>(0);
-const [message, setMessage, attachToMessage] = createSignal<string>("");
+const [message, setMessage] = createSignal<string>("");
 
 attachToCounter(() => setMessage(counter.value, [
   [ when(v => v > 10 || v < -10), effect(() => {

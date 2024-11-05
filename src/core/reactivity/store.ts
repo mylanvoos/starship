@@ -44,7 +44,7 @@ class Store {
     }
 
     isSignal(object: any): boolean {
-        return object instanceof SignalGuard || object instanceof Signal
+        return object instanceof SignalGuard
     }
 
     reset() {

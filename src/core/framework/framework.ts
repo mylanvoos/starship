@@ -1,7 +1,7 @@
 import { isSignal } from "../reactivity/store";
 
 // Rendering
-export function h(tag: any, props: any, ...children: any[]): HTMLElement {
+export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
     if (typeof tag === 'function') {
       return tag({ ...props, children });
     }
@@ -32,6 +32,7 @@ export function h(tag: any, props: any, ...children: any[]): HTMLElement {
         child.signal.sentry.assign(child.signal.id, () => textNode.textContent = child.value)
 
       } else if (child instanceof Node) {
+        console.log(child)
         element.appendChild(child)
         
       } else {
@@ -45,7 +46,6 @@ export function h(tag: any, props: any, ...children: any[]): HTMLElement {
 }
 
 export const Fragment = (props: { children: any[] }) => props.children
-
 // Pattern matching
 
 export const _ = Symbol('wildcard')
@@ -65,6 +65,7 @@ export type Pattern<T> =
 
 export type MatchCase<T, R> = [Pattern<T>, R]
 
+// Match enforces the use of the wildcard (consider all cases)
 export function match<T, R>(value: T, cases: MatchCase<T, R>[]): R {
     for (const [pattern, result] of cases) {
       let isMatch = false
