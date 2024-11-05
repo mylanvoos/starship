@@ -1,4 +1,4 @@
-declare namespace JSX {
+export declare namespace JSX {
     export interface Element extends HTMLElement {
         render(): HTMLElement
     }
@@ -9,10 +9,12 @@ declare namespace JSX {
 }
 
 // JSX factory function
-declare function h(
+export declare function h(
     type: string | Function,
     props: Record<string, any> | null,
     ...children: any[]
 ): HTMLElement
 
-declare function Fragment(props: { children: any[] }): any
+export declare function Fragment(props: { children: any[] }): any
+
+export {}

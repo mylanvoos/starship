@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@core/*": ["src/core/*"],
+      "@core/dom": ["src/core/dom/*"],
+      "@core/framework": ["src/core/framework/*"],
+      "@core/reactivity": ["src/core/reactivity/*"]
+    },
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",

@@ -5,10 +5,9 @@
         <button onClick={() => setCounter(counter.value - 1)}> -1 </button>
         { counter }
         <button onClick={() => setCounter(counter.value + 1)}> +1 </button>
-        <button onClick={() => setVoyagerThreshold(counter.value)}> Set Voyager threshold </button>
+        <button onClick={() => setVoyagerThreshold(counter.value)}> Set Voyager activation code </button>
       <p>{ message }</p>
-      <p>{ voyagerThreshold }</p>
-      <p>{ voyager }</p>
+      <p>Voyager online at: { voyagerThreshold }</p>
       <Show when={voyager}>
         <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg/800px-The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg' />
       </Show>
@@ -16,13 +15,9 @@
 </template>
 
 <script>
-import { effect, match, when, _ } from "./core/framework/framework"
-import { createSignal } from "./core/reactivity/store"
-import { Show } from "./core/dom/rendering"
-
 const [counter, setCounter, attachToCounter] = createSignal<number>(0)
 const [message, setMessage] = createSignal<string>("")
-const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(7)
+const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(5)
 const [voyager, setVoyagerDisplay] = createSignal<boolean>(false)
 
 attachToCounter(() => setMessage(counter.value, [
@@ -41,8 +36,6 @@ attachToCounter(() => {
 })
 
 attachToThreshold(() => { 
-  console.log("Equal?", voyagerThreshold.value === counter.value)
-
   if (voyagerThreshold.value === counter.value) setVoyagerDisplay(true)
   else setVoyagerDisplay(false)
 })

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import path from 'path'
 import fs from 'fs'
 import { transform as esbuildTransform } from 'esbuild'
 
@@ -35,7 +36,9 @@ function starshipPlugin() {
           ` : ''
 
         const code = `
-import { h } from './core/framework/framework'
+import {  effect, match, when, _ } from "@core/framework"
+import { createSignal } from "@core/reactivity"
+import { Show, h, Fragment } from "@core/dom"
 
 ${scriptContent}
 
@@ -70,6 +73,14 @@ export default class Component {
 
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@core': path.resolve(__dirname, './src/core'),
+      '@core/dom': path.resolve(__dirname, './src/core/dom'),
+      '@core/framework': path.resolve(__dirname, './src/core/framework'),
+      '@core/reactivity': path.resolve(__dirname, './src/core/reactivity')
+    }
+  },
   plugins: [starshipPlugin()],
   esbuild: {
     jsxFactory: 'h',
