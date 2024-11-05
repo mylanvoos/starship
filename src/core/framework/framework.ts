@@ -1,27 +1,50 @@
-export function h(tag: string | Function, props: any, ...children: any[]): HTMLElement {
+import { isSignal } from "../reactivity/store";
+
+export function h(tag: any, props: any, ...children: any[]): HTMLElement {
     if (typeof tag === 'function') {
-      return tag(props);
+      return tag({ ...props, children });
     }
   
     const element = document.createElement(tag);
-  
-    for (const name in props) {
-      if (name.startsWith('on') && typeof props[name] === 'function') {
-        element.addEventListener(name.slice(2).toLowerCase(), props[name]);
-      } else {
-        element.setAttribute(name, props[name]);
+
+    if (props) {
+      for (const name in props) {
+        if (name.startsWith('on') && typeof props[name] === 'function') {
+          element.addEventListener(name.slice(2).toLowerCase(), props[name]);
+        } else if (name === 'className' || name === 'class' ) {
+          element.setAttribute('class', props[name])
+        } else {
+          element.setAttribute(name, props[name]);
+        }
       }
     }
-  
-    for (const child of children) {
-      element.appendChild(
-        child instanceof Node ? child : document.createTextNode(child)
-      );
+
+    function appendChild(child: any) {
+      if (child == null || child === false) return
+
+      if (Array.isArray(child)) {
+        child.forEach(appendChild) // recursive
+
+      } else if (isSignal(child)) {
+        const textNode = document.createTextNode(child.value)
+        element.appendChild(textNode)
+        child.sentry.assign(child.id, () => textNode.textContent = child.value)
+
+      } else if (child instanceof Node) {
+        element.appendChild(child)
+        
+      } else {
+        element.appendChild(document.createTextNode(child.toString()))
+      }
     }
-  
+
+    children.flat().forEach(appendChild)
+
     return element;
-  }
-  
+}
+
+export const Fragment = (props: { children: any[] }) => props.children
+
 
 export const _ = Symbol('wildcard')
 

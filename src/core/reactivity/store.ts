@@ -11,7 +11,7 @@ class Store {
     private sentry: Sentry = new Sentry()
     
     createSignal<T>(initialValue?: T): [
-        getter: Getter<T>,
+        getter: Signal<T>,
         setter: Setter<T>,
         attacher: (listener: Function) => void
     ] {
@@ -22,12 +22,8 @@ class Store {
 
         const signal = this.signals.get(localIndex)!
 
-        // dynamic getter
-        const getter: Getter<T> = {
-            get value() {
-                return signal.get()
-            }
-        }
+        const getter = signal
+
         const setter: Setter<T> = ((...args: any[]) => {
             if (args.length === 1) {
                 const newValue: T = args[0]
@@ -45,6 +41,10 @@ class Store {
         const attacher = (listener: Function) => signal.sentry.assign(localIndex, listener)
 
         return [getter, setter, attacher]
+    }
+
+    isSignal(object: any): boolean {
+        return object && object instanceof Signal
     }
 
     reset() {
@@ -70,4 +70,5 @@ export const createSignal: <T>(initialValue?: T) => [
     attacher: (listener: Function) => void
 ] = storeInstance.createSignal.bind(storeInstance)
 
+export const isSignal: (child: any) => boolean = storeInstance.isSignal.bind(storeInstance)
 export const resetStore = storeInstance.reset.bind(storeInstance)

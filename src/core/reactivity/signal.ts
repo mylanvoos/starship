@@ -17,4 +17,7 @@ export class Signal<T> {
             this.sentry.notify(this.id, newVal)
         }
     }
+    toString(): string {
+        return this.value.toString()
+    }
 }

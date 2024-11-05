@@ -16,6 +16,17 @@ function starshipPlugin() {
         const templateContent = templateMatch ? templateMatch[1] : '';
         const scriptContent = scriptMatch ? scriptMatch[1] : '';
 
+        const importStatements: string[] = []
+        const otherCode: string[] = []
+
+        scriptContent.split('\n').forEach((line) => {
+          if (line.startsWith('import')) {
+            importStatements.push(line)
+          } else {
+            otherCode.push(line)
+          }
+        })
+
         const code = `
 import { h } from './core/framework/framework';
 
