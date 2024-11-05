@@ -5,23 +5,23 @@
   <div class="container">
       <h1 class="title">Starship 🛰️</h1>
       <p>The classic button experiment to test reactivity...</p>
-        <button onClick={() => setCounter(counter.value - 1)}>
-          -1
-        </button>
+        <button onClick={() => setCounter(counter.value - 1)}> -1 </button>
         { counter }
-        <button onClick={() => setCounter(counter.value + 1)}>
-          +1
-        </button>
+        <button onClick={() => setCounter(counter.value + 1)}> +1 </button>
+        <button onClick={() => setVoyagerThreshold(counter.value)}> Set Voyager activation code </button>
       <p>{ message }</p>
+      <p>Voyager online at: { voyagerThreshold }</p>
+      <Show when={voyager}>
+        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg/800px-The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg' />
+      </Show>
   </div>
 </template>
 
 <script>
-import { effect, match, when, _ } from "./core/framework/framework";
-import { createSignal } from "./core/reactivity/store";
-
-const [counter, setCounter, attachToCounter] = createSignal<number>(0);
-const [message, setMessage] = createSignal<string>("");
+const [counter, setCounter, attachToCounter] = createSignal<number>(0)
+const [message, setMessage] = createSignal<string>("")
+const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(5)
+const [voyager, setVoyagerDisplay] = createSignal<boolean>(false)
 
 attachToCounter(() => setMessage(counter.value, [
   [ when(v => v > 10 || v < -10), effect(() => {
@@ -32,7 +32,32 @@ attachToCounter(() => setMessage(counter.value, [
   [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
   [ _, effect(`Keep pressing...`) ]
 ]))
+
+// Two-way link 
+attachToCounter(() => {
+  if (voyagerThreshold.value === counter.value) setVoyagerDisplay(true)
+  else setVoyagerDisplay(false)
+})
+attachToThreshold(() => { 
+  if (voyagerThreshold.value === counter.value) setVoyagerDisplay(true)
+  else setVoyagerDisplay(false)
+})
 </script>
+
+<style>
+body {
+  font-family: "Lucida Console";
+  font-size: 16px;
+  width: 500px;
+  margin: auto;
+}
+button {
+  margin: 0 20px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+}
+</style>
 
 ```
 
@@ -67,5 +92,13 @@ attachToCounter(() => setMessage(counter.value, [
 ### Vue-like syntax 
 `<template>`, `<script>`, and `<style>` here! A custom Vite plugin was needed to make this work. By default, `<template>` uses JSX and `<script>` uses TypeScript.
 
+### Conditional rendering with `<Show when={...}>`
+Whatever's inside the `<Show>` block gets rendered when the expression inside `when` evaluates to true. 
 
+```
+<Show when={voyager}>
+  <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg/800px-The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg' />
+</Show>
+```
 
+"Show the Voyager record image when the `voyager` evaluates to true!"
