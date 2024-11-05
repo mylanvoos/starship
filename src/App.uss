@@ -9,7 +9,7 @@
       <p>{ message }</p>
       <p>Voyager online at: { voyagerThreshold }</p>
       <Show when={() => voyagerThreshold.value === counter.value}>
-        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg/800px-The_Sounds_of_Earth_Record_Cover_-_GPN-2000-001978.jpg' />
+        <img src='https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg' />
       </Show>
   </div>
 </template>
