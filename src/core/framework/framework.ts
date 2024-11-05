@@ -1,3 +1,4 @@
+import { Signal, SignalGuard } from "../reactivity/signal";
 import { isSignal } from "../reactivity/store";
 
 export function h(tag: any, props: any, ...children: any[]): HTMLElement {
@@ -30,7 +31,7 @@ export function h(tag: any, props: any, ...children: any[]): HTMLElement {
         // TODO: Sort this out properly
         const textNode = document.createTextNode(child.value)
         element.appendChild(textNode)
-        child.sentry.assign(child.id, () => textNode.textContent = child.value)
+        child.signal.sentry.assign(child.signal.id, () => textNode.textContent = child.value)
 
       } else if (child instanceof Node) {
         element.appendChild(child)

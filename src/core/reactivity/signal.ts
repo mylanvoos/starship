@@ -1,7 +1,5 @@
 import { Sentry } from "./sentry"
 
-// TODO: Value protection to prevent directly modifying value
-
 export class Signal<T> {
     private value: T
     readonly id: number
@@ -19,7 +17,17 @@ export class Signal<T> {
             this.sentry.notify(this.id, newVal)
         }
     }
+}
+
+export class SignalGuard<T> {
+    readonly signal: Signal<T>
+    get value(): T {
+        return this.signal.get() 
+    }
+    constructor(signal: Signal<T>) {
+        this.signal = signal
+    }
     toString(): string {
-        return this.value.toString()
+        return this.signal.get().toString()
     }
 }

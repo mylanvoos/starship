@@ -3,7 +3,7 @@
 
 import { match, _, MatchCase } from "../framework/framework";
 import { Sentry } from "./sentry";
-import { Signal } from "./signal";
+import { Signal, SignalGuard } from "./signal";
 
 class Store {
     private signals: Map<number, Signal<any>> = new Map()
@@ -11,7 +11,7 @@ class Store {
     private sentry: Sentry = new Sentry()
     
     createSignal<T>(initialValue?: T): [
-        getter: Signal<T>,
+        getter: SignalGuard<T>,
         setter: Setter<T>,
         attacher: (listener: Function) => void
     ] {
@@ -22,7 +22,7 @@ class Store {
 
         const signal = this.signals.get(localIndex)!
 
-        const getter = signal
+        const getter = new SignalGuard(signal)
 
         const setter: Setter<T> = ((...args: any[]) => {
             if (args.length === 1) {
@@ -44,7 +44,7 @@ class Store {
     }
 
     isSignal(object: any): boolean {
-        return object && object instanceof Signal
+        return object instanceof SignalGuard || object instanceof Signal
     }
 
     reset() {
@@ -66,5 +66,5 @@ export const createSignal: <T>(initialValue?: T) => [
     attacher: (listener: Function) => void
 ] = storeInstance.createSignal.bind(storeInstance)
 
-export const isSignal: (child: any) => boolean = storeInstance.isSignal.bind(storeInstance)
+export const isSignal: (object: any) => boolean = storeInstance.isSignal.bind(storeInstance)
 export const resetStore = storeInstance.reset.bind(storeInstance)
