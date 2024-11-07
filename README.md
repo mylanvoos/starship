@@ -1,12 +1,12 @@
-## Starship.js - Yet another JavaScript framework ###
+## Starship - A novel frontend framework inspired by React and Vue ###
 
 ![](https://raw.githubusercontent.com/mylanvoos/starship/refs/heads/main/public/starship.png)
 
 <details>
   <summary>Show Code</summary>
 
-  ```jsx
-  <template>
+```jsx
+<template>
   <div class="container">
       <h1 class="title">Starship 🛰️</h1>
       <p>The classic button experiment to test reactivity...</p>
@@ -24,8 +24,8 @@
 
 ```
 ```typescript
-  <script>
-  const [counter, setCounter, attachToCounter] = createSignal<number>(0)
+<script>
+const [counter, setCounter, attachToCounter] = createSignal<number>(0)
 const [message, setMessage] = createSignal<string>("")
 const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(5)
 
@@ -41,7 +41,7 @@ attachToCounter(() => setMessage(counter.value, [
   </script>
 ```
 ```css
-  <style>
+<style>
 body {
   font-family: "Lucida Console";
   width: 500px;
@@ -53,15 +53,13 @@ button {
   border: none;
   border-radius: 5px;
 }
-  </style>
+</style>
 ```
 </details> 
 
 This is an experiment in making a frontend framework that is *reactive*, can *manage the application state* and *manipulate the DOM*, and has a *component-based architecture*. 
 
-Inspired by React, Vue, and Solid.js
-
-### Reactivity: an attempt at recreating React's useState hook from scratch
+### Reactivity: an attempt at recreating React's `useState` hook from scratch
 
 ```typescript 
 const [counter, setCounter, attach] = createSignal<number>(0)
@@ -94,7 +92,7 @@ attachToCounter(() => setMessage(counter.value, [
 Whatever's inside the `<Show>` block gets rendered when the expression inside `when` evaluates to true. 
 
 ```jsx
-<Show when={voyager}>
+<Show when={() => voyagerThreshold.value === counter.value}>
   <img src='https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg' />
 </Show>
 ```
