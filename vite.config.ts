@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import fs from 'fs'
 import { transform as esbuildTransform } from 'esbuild'
+import { parse } from './src/compiler/parser'
 
 function starshipPlugin() {
   return {
@@ -16,18 +17,9 @@ function starshipPlugin() {
         const styleMatch = fileContent.match(/<style>([\s\S]*?)<\/style>/)
 
         const templateContent = templateMatch ? templateMatch[1] : ''
+        const templateParsed = parse(templateContent)
         const scriptContent = scriptMatch ? scriptMatch[1] : ''
         const styleContent = styleMatch ? styleMatch[1] : ''
-
-        const componentId = id.replace(/[^a-zA-Z0-9]/g, '_')
-        const uniqueClass = `component_${componentId}`
-
-        const scopedTemplate = templateContent.replace(
-          /<div([^>]*)>/,
-          `<div class="${
-            styleContent ? uniqueClass : ''
-          }"$1>`
-        )
         
         const styleInjectionCode = styleContent ? `
           const style = document.createElement('style')
@@ -36,23 +28,28 @@ function starshipPlugin() {
           ` : ''
 
         const code = `
-import {  effect, match, when, _ } from "@core/framework"
-import { createSignal } from "@core/reactivity"
-import { Show, h, Fragment } from "@core/dom"
+        import {  effect, match, when, _ } from "@core/framework"
+        import { createSignal } from "@core/reactivity"
+        import { Show, h, Fragment } from "@core/dom"
 
-${scriptContent}
+        ${scriptContent}
 
-export default class Component {
-  render(): HTMLElement {
-  ${styleInjectionCode}
-    return (
-      ${templateContent}
-    )
-  }
-}
+        export default class Component {
+          render(): HTMLElement {
+          ${styleInjectionCode}
+            return (
+                <div class="container">
+                    <h1 class="title">Starship 🛰️</h1>
+                    <p>The classic button experiment to test reactivity...</p>
+                    <button onClick={() => setCounter(counter.value - 1)}> -1 </button>
+                      { counter }
+                    <button onClick={() => setCounter(counter.value + 1)}> +1 </button>
+                    <p>{ message }</p>
+                </div>
+            )
+          }
+        }
         `
-
-        console.log("Code:", code)
 
         const result = await esbuildTransform(code, {
           loader: 'tsx',
@@ -82,7 +79,7 @@ export default defineConfig({
     }
   },
   plugins: [
-    // starshipPlugin()
+    starshipPlugin()
     ],
   esbuild: {
     jsxFactory: 'h',

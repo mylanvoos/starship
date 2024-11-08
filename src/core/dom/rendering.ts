@@ -1,4 +1,4 @@
-import { SignalGuard } from "src/core/reactivity/signal";
+import { SignalGuard } from "@core/reactivity/signal";
 import { isSignal, setCurrentComputation } from "../reactivity/store";
 
 export function h(tag: any, props?: any, ...children: any[]): HTMLElement {

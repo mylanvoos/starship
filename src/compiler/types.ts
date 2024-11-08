@@ -1,7 +1,8 @@
 export type Token = {
-    type: 'Tag' | 'Attribute' | 'Directive' | 'Expression' | 'Text'
+    type: 'TagOpen' | 'TagClose' | 'Attribute' | 'Directive' | 'Expression' | 'Text' | 'Element'
     value: string
-    content: string
+    content?: string
+    selfClosing?: boolean
 }
 
 export type ASTNode = {

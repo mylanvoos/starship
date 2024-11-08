@@ -6,6 +6,11 @@
         {Show}{Hide} it!
     </Show>
 </button>
+<For {post in posts}>
+    <a {post.link}> 
+        {post.content} 
+    </a>
+</For>
 
 <script>
 const hidden = createSignal<boolean>(false)
