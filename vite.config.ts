@@ -81,7 +81,9 @@ export default defineConfig({
       '@core/reactivity': path.resolve(__dirname, './src/core/reactivity')
     }
   },
-  plugins: [starshipPlugin()],
+  plugins: [
+    // starshipPlugin()
+    ],
   esbuild: {
     jsxFactory: 'h',
     jsxFragment: 'Fragment',
