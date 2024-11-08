@@ -3,15 +3,27 @@ import { TokeniserOptions } from "./options";
 import { Stack } from "./utils";
 import fs from 'fs'
 import jsx, * as acornjsx from 'acorn-jsx'
+import { StarshipAttribute, StarshipToken } from "./types";
 
-class StarshipTokeniser extends Parser.extend(jsx({ allowNamespaces: false })) {
-  specialTags: Set<string>
-  specialTagsStack: Stack<string>
+class StarshipTokeniser extends (Parser as any) {
+  declare specialTags: Set<string>
+  declare specialTagsStack: Stack<string>
+  declare currentAttributes: Set<StarshipAttribute>
 
   constructor(options: Options, input: string) {
+    const jsxParser = Parser.extend(jsx())
     super(options, input)
+
     this.specialTags = new Set(['Show', 'For', 'Switch'])
     this.specialTagsStack = new Stack<string>()
+    this.currentAttributes = new Set<StarshipAttribute>()
+  }
+
+  readToken(code: number): StarshipToken {
+    if (code === 60) { // '<'
+      return this.readTag()
+    }
+    return super.readToken(code)
   }
 
 }
