@@ -1,6 +1,7 @@
 export type Token = {
     type: 'Tag' | 'Attribute' | 'Directive' | 'Expression' | 'Text'
     value: string
+    content: string
 }
 
 export type ASTNode = {
@@ -14,8 +15,4 @@ export type Expression = {
     type: 'Expression'
     value: string | Function
     // might do a function here
-}
-
-export type Text = {
-    value: string
 }

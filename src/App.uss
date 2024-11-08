@@ -1,3 +1,4 @@
-<button> 
-    Hi
+<button "#press-button" on:click={setHidden(!)}> 
+    HI
 </button>
+<p ".paragraph" key={one} style="color:red">Hello</p>

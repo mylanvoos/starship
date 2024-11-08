@@ -4,7 +4,7 @@ import path from 'path'
 import fs from 'fs'
 import { Token } from '../src/compiler/types'
 
-const appPath = path.resolve(__dirname, '../App.uss')
+const appPath = path.resolve(__dirname, '../src/App.uss')
 
 function getTokenisedContent(): Token[] {
     const content = fs.readFileSync(appPath)
@@ -16,6 +16,5 @@ test.describe('Tokeniser tests', () => {
         const tokens = getTokenisedContent()
 
         expect(tokens).toBeInstanceOf(Array)
-        console.log(tokens)
     })
 })

@@ -2,8 +2,9 @@ export const _ = Symbol('wildcard')
 
 // syntactic wrappers
 export function when(predicate: (value: any) => boolean) {
-    return predicate 
+    return { predicate };
 }
+
 export function effect<T>(value: T)  {
     return value
 }

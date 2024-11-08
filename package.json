@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "start": "tsc && vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npx playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.2",
