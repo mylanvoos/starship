@@ -1,38 +1,10 @@
 <template>
-<button on:click={setHidden(!)}> 
-    <Show when={!hidden}>
-        {Show}{Hide} it!
-    </Show>
-</button>
+
+<div "#root">
+  <p ".hello">Hello</p>
+  <p ".hello">World</p>
+  <button on:click={console.log("Hi")} Click me </button>
+  <img {../public/img.png}
+</div>
+
 </template>
-
-<script>
-const [counter, setCounter, attachToCounter] = createSignal<number>(0)
-const [message, setMessage] = createSignal<string>("")
-const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(5)
-
-attachToCounter(() => setMessage(counter.value, [
-  [ when(v => v > 10 || v < -10), effect(() => {
-    setCounter(0)
-    return "Cannot exceed +=10!"
-  }) ],
-  [ when(v => v === 0), effect("Press a button to get started.")],
-  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
-  [ _, effect(`Keep pressing...`) ]
-]))
-
-</script>
-
-<style>
-body {
-  font-family: "Lucida Console";
-  width: 500px;
-  margin: auto;
-}
-button {
-  margin: 0 20px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-}
-</style>

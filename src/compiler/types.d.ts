@@ -17,3 +17,9 @@ export type Expression = {
     value: string | Function
     // might do a function here
 }
+
+export interface StarshipAttribute {
+    type: 'class' | 'id' | 'event' | 'path' | 'attribute'
+    name?: string
+    value: string | boolean | null
+}

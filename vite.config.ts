@@ -17,7 +17,7 @@ function starshipPlugin() {
         const styleMatch = fileContent.match(/<style>([\s\S]*?)<\/style>/)
 
         const templateContent = templateMatch ? templateMatch[1] : ''
-        const templateParsed = parse(templateContent)
+        const templateParsed = parse(templateMatch ? templateMatch[1] : '')
         const scriptContent = scriptMatch ? scriptMatch[1] : ''
         const styleContent = styleMatch ? styleMatch[1] : ''
         
@@ -39,12 +39,7 @@ function starshipPlugin() {
           ${styleInjectionCode}
             return (
                 <div class="container">
-                    <h1 class="title">Starship 🛰️</h1>
-                    <p>The classic button experiment to test reactivity...</p>
-                    <button onClick={() => setCounter(counter.value - 1)}> -1 </button>
-                      { counter }
-                    <button onClick={() => setCounter(counter.value + 1)}> +1 </button>
-                    <p>{ message }</p>
+                  ${templateContent}
                 </div>
             )
           }

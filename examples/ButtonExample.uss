@@ -1,16 +1,10 @@
-<Show when={!hidden}>
-    {Toggle the button to see the forbidden line of text.}{This is a forbidden line of text...}
-</Show>
+<p ".class">This is a class name</p>
 <button on:click={setHidden(!)}> 
     <Show when={!hidden}>
         {Show}{Hide} it!
     </Show>
 </button>
-<For {post in posts}>
-    <a {post.link}> 
-        {post.content} 
-    </a>
-</For>
+
 
 <script>
 const hidden = createSignal<boolean>(false)
