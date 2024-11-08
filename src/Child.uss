@@ -1,36 +1,52 @@
-<template>
-  <div class="container">
-      <h1 class="title">Starship 🛰️</h1>
-      <p>The classic button experiment to test reactivity...</p>
-        <button onClick={() => setCounter(counter.value - 1)}>
-          -1
-        </button>
-        { counter }
-        <button onClick={() => setCounter(counter.value + 1)}>
-          +1
-        </button>
-      <p>{message}</p>
-  </div>
-</template>
+<div ".container">
+  <h1 ".title">Starship 🛰️</h1>
+  <button :click={setCounter(-1)}> -1 </button>
+    { counter }
+  <button :click={setCounter(+1)}> +1 </button>
+  <button :click|preventDefault={setVoyagerThreshold(counter)}> Set Voyager activation code </button>
+
+  <p>{ message }</p>
+  <p>Voyager online at: { voyagerThreshold }</p>
+
+  <Show when={voyagerThreshold === counter}>
+    <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
+  </Show>
+  <Show else>
+    <p> Voyager not activated </p>
+  </Show>
+
+</div>
 
 <script>
-import { effect, match, when, _ } from "./core/framework/framework";
-import { createSignal } from "./core/reactivity/store";
+const counter = createSignal<number>(0)
+const message = createSignal<string>("")
+const voyagerThreshold = createSignal<number>(5)
+const mutVote = createSignal<number>(0)
 
-const [counter, setCounter, attachToCounter] = createSignal<number>(0);
-const [message, setMessage] = createSignal<string>("");
+counter = 2 // not allowed, have to do setCounter(2)
+mutVote = 4 // allowed, 'mut' prepend in name
 
-attachToCounter(() => setMessage(counter.value, [
-  [ when(v => v > 10 || v < -10), effect(() => {
+attachToCounter(setMessage(counter, [
+  [ when(v => v > 10 || v < -10), effect({
     setCounter(0)
     return "Cannot exceed +=10!"
   }) ],
   [ when(v => v === 0), effect("Press a button to get started.")],
-  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
+  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter} is between [1, 4]!`)],
   [ _, effect(`Keep pressing...`) ]
 ]))
 </script>
 
 <style>
-
+body {
+  font-family: "Lucida Console";
+  width: 500px;
+  margin: auto;
+}
+button {
+  margin: 0 20px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+}
 </style>

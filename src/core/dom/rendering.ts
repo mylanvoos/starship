@@ -1,4 +1,4 @@
-import { SignalGuard } from "@core/reactivity/signal";
+import { SignalGuard } from "src/core/reactivity/signal";
 import { isSignal, setCurrentComputation } from "../reactivity/store";
 
 export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
@@ -15,6 +15,7 @@ export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
 
     if (props) {
       for (const name in props) {
+        console.log(name)
         if (name.startsWith('on') && typeof props[name] === 'function') {
           element.addEventListener(name.slice(2).toLowerCase(), props[name]);
         } else if (name === 'className' || name === 'class' ) {

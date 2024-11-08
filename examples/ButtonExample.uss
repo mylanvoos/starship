@@ -1,0 +1,13 @@
+<Show when={!hidden}>
+    {Toggle the button to see the forbidden line of text.}{This is a forbidden line of text...}
+</Show>
+<button on:click={setHidden(!)}> 
+    <Show when={!hidden}>
+        {Show}{Hide} it!
+    </Show>
+</button>
+
+<script>
+const hidden = createSignal<boolean>(false)
+const posts = createSignal<{ link: string; content: string }({})
+</script>

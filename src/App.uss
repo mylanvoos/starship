@@ -5,19 +5,13 @@
       <button onClick={() => setCounter(counter.value - 1)}> -1 </button>
         { counter }
       <button onClick={() => setCounter(counter.value + 1)}> +1 </button>
-      <button onClick={() => setVoyagerThreshold(counter.value)}> Set Voyager activation code </button>
       <p>{ message }</p>
-      <p>Voyager online at: { voyagerThreshold }</p>
-      <Show when={() => voyagerThreshold.value === counter.value}>
-        <img src='https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg' />
-      </Show>
   </div>
 </template>
 
 <script>
 const [counter, setCounter, attachToCounter] = createSignal<number>(0)
 const [message, setMessage] = createSignal<string>("")
-const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(5)
 
 attachToCounter(() => setMessage(counter.value, [
   [ when(v => v > 10 || v < -10), effect(() => {
