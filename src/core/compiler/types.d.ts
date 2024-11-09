@@ -1,16 +1,16 @@
-import { Token, TokenType } from "acorn"
+import { Token, TokenType, Position } from "acorn"
 
 export type ASTNode = {
     type: 'Element' | 'Text' | 'Expression'
     tag?: string
-    attribute?: Record<string, string | Expression>
+    attribute?: Record<string, string>
     children?: ASTNode[]
+    value?: string
 }
 
-export type Expression = {
-    type: 'Expression'
-    value: string | Function
-    // might do a function here
+export interface CompilerOptions {
+    sourceMap?: boolean
+    prettify?: boolean
 }
 
 export interface StarshipAttribute {

@@ -21,8 +21,13 @@
     "outDir": "./dist",
     "typeRoots": [
       "./node_modules/@types",
-      "./src/core/framework/types"
+      "./src/core/framework/types",
+      "./src/core/types"
     ]
   },
-  "include": ["src", "src/core/framework/types/**/*" ]
+  "include": [
+    "src", 
+    "src/core/framework/types/**/*", 
+    "src/core/types/**/*" 
+  ]
 }

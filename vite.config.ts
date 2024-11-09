@@ -38,9 +38,7 @@ function starshipPlugin() {
           render(): HTMLElement {
           ${styleInjectionCode}
             return (
-                <div class="container">
                   ${templateContent}
-                </div>
             )
           }
         }
