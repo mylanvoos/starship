@@ -4,55 +4,8 @@ import * as acorn from 'acorn'
 import jsx from 'acorn-jsx'
 import { StarshipAttribute, StarshipToken } from './types'
 
-const Parser = acorn.Parser.extend(jsx())
-const code = `
-<div ".container">
-    <h1 "#text" style={color:red;}>Starship 🛰️</h1>
-    <p "#text">The classic button experiment to test reactivity...</p>
-    <button on:click={() => setCounter(counter.value - 1)}> -1 </button>
-        { counter }
-    <button on:click={() => setCounter(counter.value + 1)}> +1 </button>
-    <p "#text">{ message }</p>
-    <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
-    <a {../link}>Link here</a>
-</div>`
 
-class StarshipParser extends Parser {
-    private pos: number
-    private length: number
-    private tags: string[]
-
-    constructor(options: acorn.Options, source: string) {
-        super(options, source)
-        this.pos = 0
-        this.input = this.input.trim() // trim whitespaces
-        this.length = this.input.length
-        console.log(tokeniser(this.input))
-    }
-    
-    readToken(code: number) {
-        const start = this.pos
-        let end: number
-
-        if (lookAheadFor(this.input, this.pos, '".')) {
-            // console.log("class")
-        } else if (lookAheadFor(this.input, this.pos, '"#')) {
-            // console.log("id")
-        }
-    }
-    read() {
-        
-    }
-}
-
-export function tokenise(source: string) {
-
-    const parser = new StarshipParser({ ecmaVersion: "latest"}, code)
-    console.log("Parser prototype")
-    parser.read()
-}
-
-function tokeniser(input: string): StarshipToken[] {
+export function tokeniser(input: string): StarshipToken[] {
     const result: StarshipToken[] = []
 
     const REGEX = /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g
@@ -124,8 +77,8 @@ function parseTag(input: string): {
         if (match[1]) {
             const tagName = match[1]
             const attributes = match[2]?.trim() || ""
-            const attributeSet = splitAttributes(attributes)
-            // console.log(attributeSet)
+            const attributeSet = splitAttributes(tagName, attributes)
+            console.log(attributeSet)
 
             return {
                 tagType: tagName,
@@ -145,9 +98,8 @@ function parseTag(input: string): {
     return null;
 }
 
-function splitAttributes(attributesString: string): Set<StarshipAttribute> {
-    const attributes: string[] = []
-    const attributeSet: Set<StarshipAttribute> = new Set()
+function splitAttributes(tag: string, attributesString: string): Set<StarshipAttribute> {
+    const attributes: Set<StarshipAttribute> = new Set()
     let attr = ''
     let inDoubleQuotes = false
     let inSingleQuotes = false
@@ -158,8 +110,8 @@ function splitAttributes(attributesString: string): Set<StarshipAttribute> {
 
         if (char === ' ' && !inDoubleQuotes && !inSingleQuotes && braceDepth === 0) {
             if (attr.length > 0) {
-                console.log("Attributes:", attr)
-                attributes.push(attr)
+                const attribute = createStarshipAttribute(tag, attr)
+                attributes.add(attribute)
                 attr = ''
             }
             continue
@@ -178,8 +130,52 @@ function splitAttributes(attributesString: string): Set<StarshipAttribute> {
         }
     }
     if (attr.length > 0) {
-        console.log("Attribute:", attr)
-        attributes.push(attr)
+        const attribute = createStarshipAttribute(tag, attr)
+        attributes.add(attribute)
     }
     return attributes
+}
+
+function createStarshipAttribute(tag: string, attribute: string): StarshipAttribute {
+    /** 
+     * ".container" is shorthand for class="container"
+     * "#id" is shorthand for id="id"
+     */
+    const QUOTES = ["'", '"']
+    const IN_QUOTES = QUOTES.includes(attribute.at(0)) && QUOTES.includes(attribute.at(-1))
+    const IN_CURLY_BRACKETS = attribute.at(0) === '{' && attribute.at(-1) === '}'
+    const IN_SQUARE_BRACKETS = attribute.at(0) === '[' && attribute.at(-1) === ']'
+    const IS_PLACEHOLDER = attribute.at(0) === '@'
+
+    const INSIDE_BRACKETS = attribute.substring(1, attribute.length - 1)
+
+    console.log(tag, attribute)
+    if (attribute.at(1) === "." && IN_QUOTES) {
+        return {
+            type: 'class',
+            value: attribute.substring(2, attribute.length - 1)
+        }
+    } else if (attribute.at(1) === "#" && IN_QUOTES) {
+        return {
+            type: 'id',
+            value: attribute.substring(2, attribute.length - 1)
+        }
+    } else if (tag === 'img' && IN_CURLY_BRACKETS) {
+        return {
+            type: 'path',
+            name: 'src',
+            value: INSIDE_BRACKETS
+        }
+    } else if (tag === 'button' && IN_CURLY_BRACKETS) {
+        return {
+            type: 'type',
+            name: 'type',
+            value: INSIDE_BRACKETS
+        }
+    } else {
+        return {
+            type: 'attribute',
+            value: attribute
+        }
+    }
 }

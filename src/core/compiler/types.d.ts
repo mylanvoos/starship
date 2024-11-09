@@ -14,7 +14,7 @@ export interface CompilerOptions {
 }
 
 export interface StarshipAttribute {
-    type: 'class' | 'id' | 'event' | 'path' | 'attribute'
+    type: 'class' | 'id' | 'event' | 'path' | 'attribute' | 'type'
     name?: string
     value: string | boolean | null
 }

@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import fs from 'fs'
 import { transform as esbuildTransform } from 'esbuild'
-import { parse } from './src/core/compiler/parser'
+import { StarshipParser } from './src/core/compiler/parser'
 
 function starshipPlugin() {
   return {
@@ -17,7 +17,7 @@ function starshipPlugin() {
         const styleMatch = fileContent.match(/<style>([\s\S]*?)<\/style>/)
 
         const templateContent = templateMatch ? templateMatch[1] : ''
-        const templateParsed = parse(templateMatch ? templateMatch[1] : '')
+        const templateParsed = new StarshipParser({ ecmaVersion: "latest" }, templateMatch ? templateMatch[1] : '')
         const scriptContent = scriptMatch ? scriptMatch[1] : ''
         const styleContent = styleMatch ? styleMatch[1] : ''
         
