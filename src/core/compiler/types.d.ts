@@ -22,6 +22,7 @@ export interface StarshipAttribute {
 export interface StarshipToken extends Token {
     type: string
     isClosing?: boolean
+    isSelfClosing?: boolean
     attributes?: Set<StarshipAttribute>
     start?: number
     end?: number

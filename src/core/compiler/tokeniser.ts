@@ -2,12 +2,12 @@
 import { lookAheadFor } from '../utils'
 import * as acorn from 'acorn'
 import jsx from 'acorn-jsx'
-import { StarshipToken } from './types'
+import { StarshipAttribute, StarshipToken } from './types'
 
 const Parser = acorn.Parser.extend(jsx())
 const code = `
 <div ".container">
-    <h1 "#text">Starship 🛰️</h1>
+    <h1 "#text" style={color:red;}>Starship 🛰️</h1>
     <p "#text">The classic button experiment to test reactivity...</p>
     <button on:click={() => setCounter(counter.value - 1)}> -1 </button>
         { counter }
@@ -55,25 +55,31 @@ export function tokenise(source: string) {
 function tokeniser(input: string): StarshipToken[] {
     const result: StarshipToken[] = []
 
-    const regex = /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g
+    const REGEX = /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g
     let match
 
     /** 
      *  Matching tags will make match[1] defined 
      *  Matching text will make match[3] defined
      */
-    while ((match = regex.exec(input)) !== null) {
+    while ((match = REGEX.exec(input)) !== null) {
 
         if (match[1]) {
             const tagContent = match[0]
 
-            console.log("Tag:", tagContent)
+            // console.log("Tag:", tagContent)
 
             const start = match.index
-            const end = regex.lastIndex
+            const end = REGEX.lastIndex
+            const isSelfClosing = tagContent.includes("/>")
+
+            const { tagType, isClosing, attributes }= parseTag(tagContent)
 
             result.push({
-                type: 'tag',
+                type: tagType,
+                isClosing: isClosing,
+                isSelfClosing: isSelfClosing,
+                attributes: attributes,
                 content: tagContent,
                 start: start,
                 end: end
@@ -81,10 +87,10 @@ function tokeniser(input: string): StarshipToken[] {
         } else if (match[3]) {
 
             const textContent = match[3]
-            console.log("Text:", textContent)
-            
+            // console.log("Text:", textContent)
+
             const start = match.index
-            const end = regex.lastIndex
+            const end = REGEX.lastIndex
 
             if (textContent.trim() !== '') {
                 result.push({
@@ -100,3 +106,80 @@ function tokeniser(input: string): StarshipToken[] {
     return result
 }
 
+function parseTag(input: string): {
+    tagType: string,
+    attributes: Set<StarshipAttribute>,
+    isClosing: boolean
+} {
+    const MATCH_TAGS = /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|<\/(\w+)>/g
+    const MATCH_ATTRIBUTES = /(\.[\w-]+)|([\w-]+)(?:=(\{[^}]*\}|"[^"]*"|'[^']*'))?/g
+
+    let match
+
+    /** 
+     *  Matching opening tags will make match[1] defined 
+     *  Matching closing tags will make match[3] defined
+     */
+    while ((match = MATCH_TAGS.exec(input)) !== null) {
+        if (match[1]) {
+            const tagName = match[1]
+            const attributes = match[2]?.trim() || ""
+            const attributeSet = splitAttributes(attributes)
+            // console.log(attributeSet)
+
+            return {
+                tagType: tagName,
+                isClosing: false,
+                attributes: attributes
+            }
+        } else if (match[3]) {
+            const closingTagName = match[3];
+            return {
+                tagType: closingTagName,
+                attributes: null,
+                isClosing: true
+            }
+        }
+    }
+
+    return null;
+}
+
+function splitAttributes(attributesString: string): Set<StarshipAttribute> {
+    const attributes: string[] = []
+    const attributeSet: Set<StarshipAttribute> = new Set()
+    let attr = ''
+    let inDoubleQuotes = false
+    let inSingleQuotes = false
+    let braceDepth = 0
+
+    for (let i = 0; i < attributesString.length; i++) {
+        const char = attributesString[i]
+
+        if (char === ' ' && !inDoubleQuotes && !inSingleQuotes && braceDepth === 0) {
+            if (attr.length > 0) {
+                console.log("Attributes:", attr)
+                attributes.push(attr)
+                attr = ''
+            }
+            continue
+        }
+
+        attr += char
+
+        if (char === '"' && !inSingleQuotes && braceDepth === 0) {
+            inDoubleQuotes = !inDoubleQuotes
+        } else if (char === "'" && !inDoubleQuotes && braceDepth === 0) {
+            inSingleQuotes = !inSingleQuotes
+        } else if (char === '{' && !inDoubleQuotes && !inSingleQuotes) {
+            braceDepth++
+        } else if (char === '}' && !inDoubleQuotes && !inSingleQuotes && braceDepth > 0) {
+            braceDepth--
+        }
+    }
+    if (attr.length > 0) {
+        console.log("Attribute:", attr)
+        attributes.push(attr)
+    }
+    return attributes
+}
