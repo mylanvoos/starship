@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import fs from 'fs'
 import { transform as esbuildTransform } from 'esbuild'
-import { parse } from './src/compiler/parser'
+import { parse } from './src/core/compiler/parser'
 
 function starshipPlugin() {
   return {

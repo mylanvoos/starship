@@ -1,8 +1,13 @@
 export function lookAheadFor(source: string, pos: number, stopAt: string): boolean {
-    while (pos < source.length && source[pos] !== stopAt) {
+    const stopLength = stopAt.length
+
+    while (pos <= source.length - stopLength) {
+        if (source.substring(pos, pos + stopLength) === stopAt) {
+            return true;
+        }
         pos++
     }
-    return pos === source.length
+    return false
 }
 
 export function extractBetween(source: string, ...delimiters: string[]): string | null {

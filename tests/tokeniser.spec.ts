@@ -6,11 +6,6 @@ import { extractBetween, lookAheadFor } from '../src/core/utils'
 
 const appPath = path.resolve(__dirname, '../src/App.uss')
 
-function getTokenisedContent() {
-    const content = fs.readFileSync(appPath)
-    return tokenise(content.toString())
-}
-
 test.describe('Tokeniser tests', () => {
     test('Tokenises App.uss correctly', async () => {
         const code = `
@@ -33,7 +28,8 @@ test.describe('Tokeniser tests', () => {
 test.describe('Strings utils working', () => {
     test('LookAheadFor working', () => {
         const string = "<div className='tailor'></div>"
-        expect(lookAheadFor(string, 0, "/>")).toBe(true)
+        expect(lookAheadFor(string, 0, "/>")).toBe(false)
+        expect(lookAheadFor(string, 0, "</")).toBe(true)
     })
 
     test('ExtractBetween working', () => {

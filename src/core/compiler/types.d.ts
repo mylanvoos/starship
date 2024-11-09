@@ -20,14 +20,12 @@ export interface StarshipAttribute {
 }
 
 export interface StarshipToken extends Token {
-    value?: {
-        name: string
-        isClosing?: boolean
-        attributes?: Set<StarshipAttribute>
-        start?: number
-        end?: number
-        content?: string
-    }
+    type: string
+    isClosing?: boolean
+    attributes?: Set<StarshipAttribute>
+    start?: number
+    end?: number
+    content?: string
 }
 
 export interface ParserState {
