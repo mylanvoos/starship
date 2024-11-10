@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { tokeniser } from '../src/core/compiler/tokeniser'
+import { StarshipTokeniser } from '../src/core/compiler/tokeniser'
 import { StarshipAttribute } from '../src/core/compiler/types'
 
 const code = `
@@ -13,10 +13,12 @@ const code = `
     <input {text} "#username" @"Placeholder text" />
 </div>`
 
+
 test.describe('Tokeniser tests', () => {
     test('Tokenises tag with a class attribute', async () => {
         const code = `<div ".container"> </div>`
-        const tokens = tokeniser(code)
+        const tokeniser = new StarshipTokeniser(code)
+        const tokens = tokeniser.getTokens()
         const tokenArray = Array.from(tokens)
 
         expect(tokens[0].attributes).toBeInstanceOf(Set)
@@ -43,7 +45,8 @@ test.describe('Tokeniser tests', () => {
     })
     test('Tokenises tag with an ID attribute', async () => {
         const code = `<section "#main"></section>`
-        const tokens = tokeniser(code)
+        const tokeniser = new StarshipTokeniser(code)
+        const tokens = tokeniser.getTokens()
         const tokenArray = Array.from(tokens)
 
         expect(tokenArray).toStrictEqual([
@@ -70,7 +73,8 @@ test.describe('Tokeniser tests', () => {
 
     test('Tokenises self-closing tag with path attribute', async () => {
         const code = `<img {https://example.com/image.jpg}/>`
-        const tokens = tokeniser(code)
+        const tokeniser = new StarshipTokeniser(code)
+        const tokens = tokeniser.getTokens()
         const tokenArray = Array.from(tokens)
 
         expect(tokenArray).toStrictEqual([
@@ -90,7 +94,8 @@ test.describe('Tokeniser tests', () => {
 
     test('Tokenises tag with multiple attributes', async () => {
         const code = `<input {text} "#username" @"Enter username">`
-        const tokens = tokeniser(code)
+        const tokeniser = new StarshipTokeniser(code)
+        const tokens = tokeniser.getTokens()
         const tokenArray = Array.from(tokens)
 
         expect(tokenArray).toStrictEqual([
@@ -112,7 +117,8 @@ test.describe('Tokeniser tests', () => {
 
     test('Tokenises tag with event attribute', async () => {
         const code = `<button on:click={() => setCounter(counter + 1)}></button>`
-        const tokens = tokeniser(code)
+        const tokeniser = new StarshipTokeniser(code)
+        const tokens = tokeniser.getTokens()
         const tokenArray = Array.from(tokens)
 
         expect(tokenArray).toStrictEqual([
@@ -141,7 +147,8 @@ test.describe('Tokeniser tests', () => {
 
     test('Tokenises nested tags correctly', async () => {
         const code = `<div><p>Text inside</p></div>`
-        const tokens = tokeniser(code)
+        const tokeniser = new StarshipTokeniser(code)
+        const tokens = tokeniser.getTokens()
         const tokenArray = Array.from(tokens)
 
         expect(tokenArray).toStrictEqual([
@@ -191,7 +198,8 @@ test.describe('Tokeniser tests', () => {
     })
 
     test('Tokenises comprehensive test correctly', () => {
-        const tokens = tokeniser(code)
+        const tokeniser = new StarshipTokeniser(code)
+        const tokens = tokeniser.getTokens()
         const tokenArray = Array.from(tokens)
 
         expect(tokenArray).toStrictEqual([
@@ -233,8 +241,8 @@ test.describe('Tokeniser tests', () => {
                 attributes: new Set<StarshipAttribute>([
                   { name: 'type', value: 'submit' },
                   {
-                      name: 'on:click',
-                      value: '{() => setCounter(counter.value - 1)}'
+                      name: 'onClick',
+                      value: '() => setCounter(counter.value - 1)'
                   }
                 ]),
                 content: '<button {submit} on:click={() => setCounter(counter.value - 1)}>',

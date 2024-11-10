@@ -47,7 +47,8 @@ export class StarshipTransformer {
         return ''
     }
 
-    transformAttributes(attributes: StarshipAttribute[]): string {
+    transformAttributes(attributes: StarshipAttribute[], event?: boolean): string {
+        
         return attributes
             .map(attr => ` ${attr.name}="${attr.value}"`)
             .join('')

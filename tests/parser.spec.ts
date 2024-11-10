@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
-import { tokeniser } from '../src/core/compiler/tokeniser'
 import { StarshipParser } from '../src/core/compiler/parser'
 import { ASTNode } from '../src/core/compiler/types'
+import { StarshipTokeniser } from '../src/core/compiler/tokeniser'
 
 const code = `
 <div "#container">
@@ -15,7 +15,8 @@ const code = `
 </div>`
 
 const parse = (input: string): ASTNode[] => {
-    const parser = new StarshipParser({ ecmaVersion: "latest" }, input)
+    const tokeniser = new StarshipTokeniser(input)
+    const parser = new StarshipParser({ ecmaVersion: "latest", tokeniser }, input)
     return parser.getAST()
 }
 
