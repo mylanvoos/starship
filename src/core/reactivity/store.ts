@@ -1,7 +1,7 @@
 // A global, centralised store to maintain a map/object of all signals
 // Store is encapsulated within store.ts and is only accessible via createSignal
 
-import { capitaliseFirstLetter } from "@core/utils";
+import { capitaliseFirstLetter } from "../utils";
 import { match, _, MatchCase } from "../framework/framework";
 import { Sentry } from "./sentry";
 import { Signal, SignalGuard } from "./signal";
@@ -54,27 +54,27 @@ class Store {
     createSignals<T extends Record<string, any>>(signalsObj: T): {
         [K in keyof T]: SignalGuard<T[K]>
     } {
-    const result: Partial<Record<keyof T, SignalGuard<any>>> = {}
-    for (const key in signalsObj) {
-        const [getter, setter, attacher] = createSignal(signalsObj[key])
-        result[key] = getter
-        
-        // Dynamicly-generated setter and attacher for each signal
-        const setterName = `set${capitaliseFirstLetter(key)}`
-        const attacherName = `attachTo${capitaliseFirstLetter(key)}`
+        const result: Partial<Record<keyof T, SignalGuard<any>>> = {}
+        for (const key in signalsObj) {
+            const [getter, setter, attacher] = createSignal(signalsObj[key])
+            result[key] = getter
+            
+            // Dynamicly-generated setter and attacher for each signal
+            const setterName = `set${capitaliseFirstLetter(key)}`
+            const attacherName = `attachTo${capitaliseFirstLetter(key)}`
 
-        Object.defineProperty(globalThis, setterName, {
-            value: setter,
-            writable: true,
-            configurable: true
-        })
-        Object.defineProperty(globalThis, attacherName, {
-            value: attacher,
-            writable: true,
-            configurable: true
-        })
-    }
-    return result as { [K in keyof T]: SignalGuard<T[K]> }
+            Object.defineProperty(globalThis, setterName, {
+                value: setter,
+                writable: true,
+                configurable: true
+            })
+            Object.defineProperty(globalThis, attacherName, {
+                value: attacher,
+                writable: true,
+                configurable: true
+            })
+        }
+        return result as { [K in keyof T]: SignalGuard<T[K]> }
 }
 
     isSignal(object: any): boolean {

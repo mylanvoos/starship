@@ -1,4 +1,4 @@
-import { capitaliseFirstLetter } from '@core/utils'
+import { capitaliseFirstLetter } from '../utils'
 import { StarshipAttribute, StarshipToken } from './types'
 import { 
     getAttributePatterns, 
@@ -119,7 +119,7 @@ export class StarshipTokeniser {
         } = getAttributePatterns(attribute)
 
         const attributeNameValue = (name: string, value: string): StarshipAttribute => ({ name, value })
-
+        
         const handlers = {
             ".": () => attributeNameValue('className', INSIDE_CLASSID),
             "#": () => attributeNameValue('id', INSIDE_CLASSID),

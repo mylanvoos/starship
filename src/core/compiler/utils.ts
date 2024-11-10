@@ -9,7 +9,9 @@ const PATTERNS = {
     SQUARE_BRACKETS: /^\[(.*)]$/,            // Matches text wrapped in square brackets
     PLACEHOLDER: /^@(['"])(.*)\1$/,                       // Matches text starting with '@'
     EVENT_NAME: /on:([^=]+)=/,
-    ATTR_NAME: /([^=]+)=/
+    ATTR_NAME: /([^=]+)=/,
+    SETTER_INT: /set([A-Z][a-zA-Z0-9]*)\(([-+])(\d+|\w+|\([^()]*\))\)/,
+    SETTER_BOOL: /set([A-Z][a-zA-Z0-9]*)\(!\)/
 }
 
 export function getAttributePatterns(attribute: string) {
@@ -23,6 +25,8 @@ export function getAttributePatterns(attribute: string) {
 
     const EVENT_NAME = attribute.match(PATTERNS.EVENT_NAME) ? attribute.match(PATTERNS.EVENT_NAME)[1].trim() : null
     const ATTR_NAME = attribute.match(PATTERNS.ATTR_NAME) ? attribute.match(PATTERNS.ATTR_NAME)[1].trim() : null
+    const SETTER_INT = attribute.match(PATTERNS.SETTER_INT) 
+    const SETTER_BOOL = attribute.match(PATTERNS.SETTER_BOOL) 
     return {
         IN_QUOTES,
         IN_CURLY_BRACKETS,
@@ -32,14 +36,16 @@ export function getAttributePatterns(attribute: string) {
         INSIDE_CLASSID,
         
         EVENT_NAME,
-        ATTR_NAME
+        ATTR_NAME,
+        SETTER_BOOL,
+        SETTER_INT
     };
 }
 
 export function getGeneralPatterns() {
     return {
         TEXT_TAGS: PATTERNS.TEXT_TAGS,
-        TAGS: PATTERNS.TAGS
+        TAGS: PATTERNS.TAGS,
     }
 }
 

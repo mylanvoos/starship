@@ -1,9 +1,9 @@
 <div ".container">
   <h1 "#text">Starship 🛰️</h1>
   <p "#text">The classic button experiment to test reactivity...</p>
-  <button on:click={() => setCounter(counter - 1)}> -1 </button>
+  <button on:click={() => setCounter(counter.value - 1)}> -1 </button>
       { counter }
-  <button on:click={() => setCounter(Number(counter) + 1)}> +1 </button>
+  <button on:click={() => setCounter(counter.value + 1)}> +1 </button>
 </div>
 <div ".container2">
   <p "#text">{ message }</p>
@@ -12,11 +12,7 @@
 </div>
 
 <script>
-const { counter, message, voyagerThreshold } = createSignals<{
-  counter: number,
-  message: string,
-  voyagerThreshold: number
-}>({
+const { counter, message, voyagerThreshold } = createSignals({
   counter: 0,
   message: "",
   voyagerThreshold: 5
@@ -31,7 +27,6 @@ attachToCounter(() => setMessage(counter, [
   [ when(v => [1, 2, 3, 4].includes(Number(v))), effect(`${counter} is between [1, 4] (you can do range-based pattern matching!)`)],
   [ _, effect(`Keep pressing...`) ]
 ]))
-
 </script>
 
 <style>

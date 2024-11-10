@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import path from 'path'
-import { starshipPlugin } from './src/plugins/vite-starship'
+import { starshipPlugin } from './vite-starship'
 
 export default defineConfig({
   resolve: {

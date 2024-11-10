@@ -1,7 +1,15 @@
 import fs from 'fs'
 import { transform as esbuildTransform } from 'esbuild'
-import { compile } from '../core/compiler'
+import { compile } from './src/core/compiler'
 
+const testCode = `
+<div ".container">
+  <h1 "#text">Starship 🛰️</h1>
+  <p "#text">The classic button experiment to test reactivity...</p>
+  <button on:click={setCounter(+1)}> -1 </button>
+      { counter }
+  <button on:click={setHidden(!)}> +1 </button>
+</div>`
 export function starshipPlugin() {
     return {
       name: 'vite-plugin-starship',
@@ -16,6 +24,10 @@ export function starshipPlugin() {
           const templateMatch = fileContent.replace(/<script>([\s\S]*?)<\/script>|<style>([\s\S]*?)<\/style>/g, '')
   
           const templateContent = compile(templateMatch)
+
+          console.log("\n\n\n\n START: \n\n\n\n")
+          
+          const testTemplate = compile(testCode)
   
           const scriptContent = scriptMatch ? scriptMatch[1] : ''
           const styleContent = styleMatch ? styleMatch[1] : ''
