@@ -1,26 +1,33 @@
 import { test, expect } from '@playwright/test'
-import { tokenise } from '../src/core/compiler/tokeniser'
+import { tokeniser } from '../src/core/compiler/tokeniser'
 import path from 'path'
 import fs from 'fs'
 import { extractBetween, lookAheadFor } from '../src/core/utils'
+import { StarshipAttribute } from '../src/core/compiler/types'
 
 const appPath = path.resolve(__dirname, '../src/App.uss')
 
 test.describe('Tokeniser tests', () => {
-    test('Tokenises App.uss correctly', async () => {
-        const code = `
-            <div ".container">
-                <h1 "#text">Starship 🛰️</h1>
-                <p "#text">The classic button experiment to test reactivity...</p>
-                <button on:click={() => setCounter(counter.value - 1)}> -1 </button>
-                    { counter }
-                <button on:click={() => setCounter(counter.value + 1)}> +1 </button>
-                <p "#text">{ message }</p>
-                <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
-                <a {../link}>Link here</a>
-            </div>`
+    test('Tokenises inputs correctly', async () => {
+        const code = `<div ".container"> </div>`
+        const tokens = tokeniser(code)
+        const tokenArray = Array.from(tokens)
 
-        const tokens = tokenise(code)
+        console.log(tokenArray)
+
+        expect(tokens[0].attributes).toBeInstanceOf(Set)
+        expect(tokenArray).toBe([
+            {
+              type: 'div',
+              isClosing: false,
+              isSelfClosing: false,
+              attributes: new Set([{ type: 'class', value: 'container' }]),
+              content: '<div ".container">',
+              start: 0,
+              end: 18
+            },
+            { type: 'text', content: 'div', start: 31, end: 37 }
+          ])
 
     })
 })

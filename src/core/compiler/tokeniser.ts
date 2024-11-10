@@ -1,6 +1,7 @@
 import { StarshipAttribute, StarshipToken } from './types'
 import { getAttributePatterns, getGeneralPatterns } from './utils'
 
+
 export function tokeniser(input: string): StarshipToken[] {
     const result: StarshipToken[] = []
 
@@ -31,11 +32,10 @@ export function tokeniser(input: string): StarshipToken[] {
                 content: tagContent,
                 start: start,
                 end: end
-            });
-        } else if (match[3]) {
+            })
+        } else if (match[2]) {
 
-            const textContent = match[3]
-
+            const textContent = match[2]
             const start = match.index
             const end = TEXT_TAG.lastIndex
 

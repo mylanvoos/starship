@@ -1,5 +1,5 @@
 const PATTERNS = {
-    TEXT_TAGS: /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|<\/(\w+)>/g, // Matches opening and closing tags
+    TEXT_TAGS: /(<[^>]+>)|([^<]+)/g, // Matches opening and closing tags
     OPENING_TAG: /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>/,
     CLOSING_TAG: /<\/(\w+)>/,
     

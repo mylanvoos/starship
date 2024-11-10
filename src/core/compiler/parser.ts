@@ -2,6 +2,7 @@ import * as acorn from 'acorn'
 import jsx from 'acorn-jsx'
 
 import { tokeniser } from "./tokeniser"
+import { StarshipToken } from './types'
 
 const Parser = acorn.Parser.extend(jsx())
 const code = `
@@ -16,17 +17,16 @@ const code = `
 </div>`
 
 export class StarshipParser extends Parser {
-    private pos: number
     private length: number
-    private tags: string[]
+    private tokens: StarshipToken[]
 
     constructor(options: acorn.Options, source: string) {
         super(options, source)
-        this.pos = 0
         this.input = this.input.trim() // trim whitespaces
         this.length = this.input.length
-        
-        console.log(tokeniser(code)) // DEBUG
+
+        this.tokens = tokeniser(code) // DEBUG
+        console.log(this.tokens)
     }
     
     readToken(code: number) {
