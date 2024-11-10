@@ -2,7 +2,7 @@
   <h1 "#text">Starship 🛰️</h1>
   <p "#text">The classic button experiment to test reactivity...</p>
   <button on:click={() => setCounter(counter.value - 1)}> -1 </button>
-    { counter }
+      { counter }
   <button on:click={() => setCounter(counter.value + 1)}> +1 </button>
   <p "#text">{ message }</p>
   <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
@@ -25,8 +25,6 @@ attachToCounter(() => setMessage(counter.value, [
 ]))
 
 </script>
-
-<p>HELLO</p>
 
 <style>
 body {

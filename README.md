@@ -1,4 +1,4 @@
-## Starship - A novel frontend framework inspired by React and Vue ###
+## Starship - A novel JSX-based frontend library ###
 
 ![](https://raw.githubusercontent.com/mylanvoos/starship/refs/heads/main/public/starship.png)
 
@@ -7,17 +7,17 @@
 
 ```jsx
 <template>
-  <div class="container">
-      <h1 class="title">Starship 🛰️</h1>
+  <div ".container">
+      <h1 "#title">Starship 🛰️</h1>
       <p>The classic button experiment to test reactivity...</p>
-      <button onClick={() => setCounter(counter.value - 1)}> -1 </button>
+      <button on:click={setCounter(-1)}> -1 </button>
         { counter }
-      <button onClick={() => setCounter(counter.value + 1)}> +1 </button>
-      <button onClick={() => setVoyagerThreshold(counter.value)}> Set Voyager activation code </button>
+      <button on:click={setCounter(+1)}> +1 </button>
+      <button on:click={setVoyagerThreshold(counter)}> Set Voyager activation code </button>
       <p>{ message }</p>
-      <p>Voyager online at: { voyagerThreshold }</p>
-      <Show when={() => voyagerThreshold.value === counter.value}>
-        <img src='https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg' />
+      <label {text}>Voyager online at: { voyagerThreshold }</p>
+      <Show when={voyagerThreshold === counter}>
+        <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
       </Show>
   </div>
 </template>
@@ -25,17 +25,17 @@
 ```
 ```typescript
 <script>
-const [counter, setCounter, attachToCounter] = createSignal<number>(0)
-const [message, setMessage] = createSignal<string>("")
-const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(5)
+const counter = createSignal<number>(0)
+const message = createSignal<string>("")
+const voyagerThreshold = createSignal<number>(5)
 
-attachToCounter(() => setMessage(counter.value, [
+attachToCounter(() => setMessage(counter, [
   [ when(v => v > 10 || v < -10), effect(() => {
     setCounter(0)
     return "Cannot exceed +=10!"
   }) ],
   [ when(v => v === 0), effect("Press a button to get started.")],
-  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
+  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter} is between [1, 4] (you can do range-based pattern matching!)`)],
   [ _, effect(`Keep pressing...`) ]
 ]))
   </script>

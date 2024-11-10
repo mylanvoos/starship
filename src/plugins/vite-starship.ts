@@ -10,7 +10,7 @@ export function starshipPlugin() {
   
         if (id.endsWith('.uss')) { 
           const fileContent = fs.readFileSync(id, 'utf-8')
-  
+          
           const scriptMatch = fileContent.match(/<script>([\s\S]*?)<\/script>/)
           const styleMatch = fileContent.match(/<style>([\s\S]*?)<\/style>/)
           const templateMatch = fileContent.replace(/<script>([\s\S]*?)<\/script>|<style>([\s\S]*?)<\/style>/g, '')
