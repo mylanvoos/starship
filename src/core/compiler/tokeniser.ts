@@ -1,7 +1,6 @@
 import { StarshipAttribute, StarshipToken } from './types'
 import { getAttributePatterns, getGeneralPatterns } from './utils'
 
-
 export function tokeniser(input: string): StarshipToken[] {
     const result: StarshipToken[] = []
 
@@ -64,14 +63,17 @@ function parseTag(input: string): {
 
     if ((match = OPENING_TAG.exec(input)) !== null) {
         const tagName = match[1]
-        const attributes = match[2]?.trim() || ""
+        let attributes = match[2]?.trim() || ""
+        if (attributes.at(-1) === '/') {
+            attributes = attributes.substring(0, attributes.length - 1)
+        }
         const attributeSet = splitAttributes(tagName, attributes)
         console.log(attributeSet)
 
         return {
             tagType: tagName,
             isClosing: false,
-            attributes: attributes
+            attributes: attributeSet
         }
     } else if ((match = CLOSING_TAG.exec(input)) !== null) {
         const closingTagName = match[3];
@@ -96,7 +98,10 @@ function splitAttributes(tag: string, attributesString: string): Set<StarshipAtt
 
         if (char === ' ' && !inDoubleQuotes && !inSingleQuotes && braceDepth === 0) {
             if (attr.length > 0) {
-                attributes.add(createStarshipAttribute(tag, attr))
+                const attributeList = createStarshipAttribute(tag, attr)
+                for (let i = 0; i < attributeList.length; i++) {
+                    attributes.add(attributeList[i])
+                }
                 attr = ''
             }
             continue
@@ -115,12 +120,18 @@ function splitAttributes(tag: string, attributesString: string): Set<StarshipAtt
         }
     }
     if (attr.length > 0) {
-        attributes.add(createStarshipAttribute(tag, attr))
+        const attributeList = createStarshipAttribute(tag, attr)
+        for (let i = 0; i < attributeList.length; i++) {
+            attributes.add(attributeList[i])
+        }
     }
     return attributes
 }
 
-function createStarshipAttribute(tag: string, attribute: string): StarshipAttribute {
+// TODO: Optimise and clean this up. Proper handling of width/height shortcuts in img instead of returning as Array
+
+function createStarshipAttribute(tag: string, attribute: string): StarshipAttribute[] {
+
     const { 
         IS_PLACEHOLDER,
         IN_QUOTES, 
@@ -128,69 +139,84 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
         INSIDE_BRACKETS, 
         IN_SQUARE_BRACKETS, 
         INSIDE_CLASSID, 
-        EVENT_NAME 
+        EVENT_NAME,
+        ATTR_NAME
     } = getAttributePatterns(attribute)
 
     console.log(tag, attribute)
+    
     if (attribute.at(1) === "." && IN_QUOTES) {
-        return {
+        return [{
             type: 'class',
             value: INSIDE_CLASSID
-        }
+        }]
     } 
     if (attribute.at(1) === "#" && IN_QUOTES) {
-        return {
+        return [{
             type: 'id',
             value: INSIDE_CLASSID
-        }
+        }]
     } 
     if (IS_PLACEHOLDER) {
-        return {
+        return [{
             type: 'placeholder',
             value: INSIDE_CLASSID
-        }
+        }]
     }
     if ((tag === 'img' || tag === 'a') && IN_CURLY_BRACKETS) {
-        return {
+        return [{
             type: 'path',
             name: tag === 'img' ? 'src' : 'href',
             value: INSIDE_BRACKETS
-        }
+        }]
     } 
-    if (tag === 'img' && IN_SQUARE_BRACKETS) {
-        
-    }
     if ((tag === 'button' || tag === 'input') && IN_CURLY_BRACKETS) {
-        return {
+        return [{
             type: 'type',
             value: INSIDE_BRACKETS
-        }
+        }]
     } 
     if (tag === 'label' && IN_CURLY_BRACKETS) {
-        return {
+        return [{
             type: 'for',
             value: INSIDE_BRACKETS
-        }
+        }]
     } 
     if (attribute.startsWith("on:")) {
-        return {
+        return [{
             type: 'event',
             name: EVENT_NAME,
             value: attribute.replace(`on:${EVENT_NAME}=`, '')
-        }
+        }]
     }
     if (tag === 'img' && IN_QUOTES) {
-        return {
+        return [{
             type: 'alt',
             value: INSIDE_BRACKETS
-        }
+        }]
     }
+    console.log(IN_SQUARE_BRACKETS)
     if (tag === 'img' && IN_SQUARE_BRACKETS) {
         const dimensions = INSIDE_BRACKETS.split(',').map(dim => dim.trim())
-        
+        if (dimensions.length === 2) {
+            const [width, height] = dimensions
+            return [
+                {
+                    type: 'attribute',
+                    name: 'width',
+                    value: width
+                },
+                {
+                    type: 'attribute',
+                    name: 'height',
+                    value: height
+                }
+            ]
+        }
     }
-    return {
+    return [{
         type: 'attribute',
+        name: ATTR_NAME,
         value: attribute
-    }
+    }]
 }

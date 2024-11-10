@@ -7,7 +7,8 @@ const PATTERNS = {
     CURLY_BRACKETS: /^{(.*)}$/,              // Matches text wrapped in curly braces (special shortcuts)
     SQUARE_BRACKETS: /^\[(.*)]$/,            // Matches text wrapped in square brackets
     PLACEHOLDER: /^@(['"])(.*)\1$/,                       // Matches text starting with '@'
-    EVENT_NAME: /on:([^=]+)=/
+    EVENT_NAME: /on:([^=]+)=/,
+    ATTR_NAME: /([^=]+)=/
 }
 
 export function getAttributePatterns(attribute: string) {
@@ -20,7 +21,7 @@ export function getAttributePatterns(attribute: string) {
     const INSIDE_CLASSID = attribute.substring(2, attribute.length - 1)
 
     const EVENT_NAME = attribute.match(PATTERNS.EVENT_NAME) ? attribute.match(PATTERNS.EVENT_NAME)[1].trim() : null
-
+    const ATTR_NAME = attribute.match(PATTERNS.ATTR_NAME) ? attribute.match(PATTERNS.ATTR_NAME)[1].trim() : null
     return {
         IN_QUOTES,
         IN_CURLY_BRACKETS,
@@ -29,7 +30,8 @@ export function getAttributePatterns(attribute: string) {
         INSIDE_BRACKETS,
         INSIDE_CLASSID,
         
-        EVENT_NAME
+        EVENT_NAME,
+        ATTR_NAME
     };
 }
 
