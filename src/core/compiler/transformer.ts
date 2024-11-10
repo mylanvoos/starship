@@ -14,7 +14,6 @@ export class StarshipTransformer {
 
     toJSX(): string {
         this.jsx = this.transformNodes(this.ast)
-        console.log(this.jsx)
         return this.jsx
     }
 

@@ -5,7 +5,8 @@
       "@core/*": ["src/core/*"],
       "@core/dom": ["src/core/dom/*"],
       "@core/framework": ["src/core/framework/*"],
-      "@core/reactivity": ["src/core/reactivity/*"]
+      "@core/reactivity": ["src/core/reactivity/*"],
+      "@core/compiler": ["src/core/compiler/*"]
     },
     "target": "ESNext",
     "module": "ESNext",

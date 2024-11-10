@@ -1,15 +1,13 @@
-<template>
-  <div className="container">
-      <h1 id="text">Starship 🛰️</h1>
-      <p id="text">The classic button experiment to test reactivity...</p>
-      <button onClick={() => setCounter(counter.value - 1)}> -1 </button>
-        { counter }
-      <button onClick={() => setCounter(counter.value + 1)}> +1 </button>
-      <p id="text">{ message }</p>
-      <img src='https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg' />
-      <a href='../link'>Link here</a>
-  </div>
-</template>
+<div ".container">
+  <h1 "#text">Starship 🛰️</h1>
+  <p "#text">The classic button experiment to test reactivity...</p>
+  <button on:click={() => setCounter(counter.value - 1)}> -1 </button>
+    { counter }
+  <button on:click={() => setCounter(counter.value + 1)}> +1 </button>
+  <p "#text">{ message }</p>
+  <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
+  <a {../link}>Link here</a>
+</div>
 
 <script>
 const [counter, setCounter, attachToCounter] = createSignal<number>(0)
@@ -27,6 +25,8 @@ attachToCounter(() => setMessage(counter.value, [
 ]))
 
 </script>
+
+<p>HELLO</p>
 
 <style>
 body {
