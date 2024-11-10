@@ -2,7 +2,7 @@ import * as acorn from 'acorn'
 import jsx from 'acorn-jsx'
 
 import { tokeniser } from "./tokeniser"
-import { ASTNode, AttributeNode, ElementNode, StarshipAttribute, StarshipToken } from './types'
+import { ASTNode, StarshipAttribute, StarshipToken } from './types'
 
 const Parser = acorn.Parser.extend(jsx())
 const code = `
@@ -21,12 +21,13 @@ export class StarshipParser extends Parser {
     private tokens: StarshipToken[]
     private currentTokenIndex: number
     private ast: ASTNode
+    private astString: string // nice JSON representation of the AST tree
 
     constructor(options: acorn.Options, source: string) {
         super(options, source)
         this.input = this.input.trim() // trim whitespaces
 
-        this.tokens = tokeniser(code) // DEBUG
+        this.tokens = tokeniser(code) 
         this.currentTokenIndex = 0
         this.length = this.tokens.length
 
@@ -36,7 +37,7 @@ export class StarshipParser extends Parser {
     read() {
         while (this.currentTokenIndex < this.length) {
           this.ast = this.parseElement()
-          console.log(JSON.stringify(this.ast, null, 1))
+          this.astString = JSON.stringify(this.ast, null, 1)
         }
     }
 
@@ -93,5 +94,9 @@ export class StarshipParser extends Parser {
       if (this.currentTokenIndex >= this.length) return false
       const currentToken = this.tokens[this.currentTokenIndex]
       return currentToken.type === token.type && currentToken.isClosing
+    }
+
+    getASTString(): string {
+      return this.astString
     }
 }
