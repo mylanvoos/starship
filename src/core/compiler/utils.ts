@@ -6,8 +6,8 @@ const PATTERNS = {
     QUOTES: /^(['"])(.*)\1$/,                // Matches text wrapped in single or double quotes
     CURLY_BRACKETS: /^{(.*)}$/,              // Matches text wrapped in curly braces (special shortcuts)
     SQUARE_BRACKETS: /^\[(.*)]$/,            // Matches text wrapped in square brackets
-    PLACEHOLDER: /^@/,                       // Matches text starting with '@'
-    
+    PLACEHOLDER: /^@(['"])(.*)\1$/,                       // Matches text starting with '@'
+    EVENT_NAME: /on:([^=]+)=/
 }
 
 export function getAttributePatterns(attribute: string) {
@@ -16,10 +16,10 @@ export function getAttributePatterns(attribute: string) {
     const IN_SQUARE_BRACKETS = PATTERNS.SQUARE_BRACKETS.test(attribute)
     const IS_PLACEHOLDER = PATTERNS.PLACEHOLDER.test(attribute)
 
-    const INSIDE_BRACKETS = attribute.replace(PATTERNS.QUOTES, '$2')
-        .replace(PATTERNS.CURLY_BRACKETS, '$1')
-        .replace(PATTERNS.SQUARE_BRACKETS, '$1')
-    const INSIDE_CLASSID = IS_PLACEHOLDER ? attribute.substring(1) : null
+    const INSIDE_BRACKETS = attribute.substring(1, attribute.length - 1)
+    const INSIDE_CLASSID = attribute.substring(2, attribute.length - 1)
+
+    const EVENT_NAME = attribute.match(PATTERNS.EVENT_NAME) ? attribute.match(PATTERNS.EVENT_NAME)[1].trim() : null
 
     return {
         IN_QUOTES,
@@ -27,11 +27,13 @@ export function getAttributePatterns(attribute: string) {
         IN_SQUARE_BRACKETS,
         IS_PLACEHOLDER,
         INSIDE_BRACKETS,
-        INSIDE_CLASSID
+        INSIDE_CLASSID,
+        
+        EVENT_NAME
     };
 }
 
-export function getGeneralPatterns(attribute: string) {
+export function getGeneralPatterns() {
     return {
         TEXT_TAG: PATTERNS.TEXT_TAGS,
         OPENING_TAG: PATTERNS.OPENING_TAG,

@@ -5,7 +5,7 @@ import { getAttributePatterns, getGeneralPatterns } from './utils'
 export function tokeniser(input: string): StarshipToken[] {
     const result: StarshipToken[] = []
 
-    const { TEXT_TAG } = getGeneralPatterns(input)
+    const { TEXT_TAG } = getGeneralPatterns()
 
     let match
 
@@ -58,7 +58,7 @@ function parseTag(input: string): {
     attributes: Set<StarshipAttribute>,
     isClosing: boolean
 } {
-    const { OPENING_TAG, CLOSING_TAG } = getGeneralPatterns(input)
+    const { OPENING_TAG, CLOSING_TAG } = getGeneralPatterns()
 
     let match
 
@@ -121,28 +121,35 @@ function splitAttributes(tag: string, attributesString: string): Set<StarshipAtt
 }
 
 function createStarshipAttribute(tag: string, attribute: string): StarshipAttribute {
-    /** 
-     * ".container" is shorthand for class="container"
-     * "#id" is shorthand for id="id"
-     * and so on
-     */
-
-    const { IN_QUOTES, IN_CURLY_BRACKETS, INSIDE_BRACKETS } = getAttributePatterns(attribute)
-    
+    const { 
+        IS_PLACEHOLDER,
+        IN_QUOTES, 
+        IN_CURLY_BRACKETS, 
+        INSIDE_BRACKETS, 
+        IN_SQUARE_BRACKETS, 
+        INSIDE_CLASSID, 
+        EVENT_NAME 
+    } = getAttributePatterns(attribute)
 
     console.log(tag, attribute)
     if (attribute.at(1) === "." && IN_QUOTES) {
         return {
             type: 'class',
-            value: attribute.substring(2, attribute.length - 1)
+            value: INSIDE_CLASSID
         }
     } 
     if (attribute.at(1) === "#" && IN_QUOTES) {
         return {
             type: 'id',
-            value: attribute.substring(2, attribute.length - 1)
+            value: INSIDE_CLASSID
         }
     } 
+    if (IS_PLACEHOLDER) {
+        return {
+            type: 'placeholder',
+            value: INSIDE_CLASSID
+        }
+    }
     if ((tag === 'img' || tag === 'a') && IN_CURLY_BRACKETS) {
         return {
             type: 'path',
@@ -150,6 +157,9 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
             value: INSIDE_BRACKETS
         }
     } 
+    if (tag === 'img' && IN_SQUARE_BRACKETS) {
+        
+    }
     if ((tag === 'button' || tag === 'input') && IN_CURLY_BRACKETS) {
         return {
             type: 'type',
@@ -162,6 +172,23 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
             value: INSIDE_BRACKETS
         }
     } 
+    if (attribute.startsWith("on:")) {
+        return {
+            type: 'event',
+            name: EVENT_NAME,
+            value: attribute.replace(`on:${EVENT_NAME}=`, '')
+        }
+    }
+    if (tag === 'img' && IN_QUOTES) {
+        return {
+            type: 'alt',
+            value: INSIDE_BRACKETS
+        }
+    }
+    if (tag === 'img' && IN_SQUARE_BRACKETS) {
+        const dimensions = INSIDE_BRACKETS.split(',').map(dim => dim.trim())
+        
+    }
     return {
         type: 'attribute',
         value: attribute
