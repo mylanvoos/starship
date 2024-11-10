@@ -40,3 +40,11 @@ export function getGeneralPatterns() {
         TAGS: PATTERNS.TAGS
     }
 }
+
+export function capitaliseFirstLetter(str: string) {
+    return str.at(0).toUpperCase() + str.substring(1)
+}
+
+export function getExpression(str: string) { 
+    return str.substring(1, str.length - 1)
+}

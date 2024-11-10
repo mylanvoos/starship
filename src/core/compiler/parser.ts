@@ -39,7 +39,7 @@ export class StarshipParser extends Parser {
         while (this.currentTokenIndex < this.length) {
           this.ast.push(this.parseElement())
         }
-        this.astString = JSON.stringify(this.ast, null, 1)
+        this.astString = JSON.stringify(this.ast, null, 2)
 
         console.log(this.astString)
     }

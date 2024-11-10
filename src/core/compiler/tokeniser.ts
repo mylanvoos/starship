@@ -1,5 +1,5 @@
 import { StarshipAttribute, StarshipToken } from './types'
-import { getAttributePatterns, getGeneralPatterns } from './utils'
+import { capitaliseFirstLetter, getAttributePatterns, getExpression, getGeneralPatterns } from './utils'
 
 
 export function tokeniser(input: string): StarshipToken[] {
@@ -183,8 +183,8 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
     } 
     if (attribute.startsWith("on:")) {
         return [{
-            name: `on:${EVENT_NAME}`,
-            value: attribute.replace(`on:${EVENT_NAME}=`, '')
+            name: `on${capitaliseFirstLetter(EVENT_NAME)}`,
+            value: getExpression(attribute.replace(`on:${EVENT_NAME}=`, ''))
         }]
     }
     if (tag === 'img' && IN_QUOTES) {
@@ -198,19 +198,13 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
         if (dimensions.length === 2) {
             const [width, height] = dimensions
             return [
-                {
-                    name: 'width',
-                    value: width
-                },
-                {
-                    name: 'height',
-                    value: height
-                }
+                { name: 'width', value: width },
+                { name: 'height', value: height }
             ]
         }
     }
     return [{
         name: ATTR_NAME,
-        value: attribute.replace(`${ATTR_NAME}=`, '')
+        value: getExpression(attribute.replace(`${ATTR_NAME}=`, ''))
     }]
 }

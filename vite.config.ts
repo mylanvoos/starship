@@ -4,7 +4,20 @@ import fs from 'fs'
 import { transform as esbuildTransform } from 'esbuild'
 import { StarshipParser } from './src/core/compiler/parser'
 
+
 function starshipPlugin() {
+  // JUST FOR TESTING
+const testCode = `
+<div "#container">
+    <h1 ".text" style={color:red;}>Starship 🛰️</h1>
+    <button {submit} on:click={() => setCounter(counter.value - 1)}> -1 </button>
+    { counter }
+    <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [50,50] />
+    <a {../link}>Link here</a>
+    <label {username}>Username:</label>
+    <input {text} "#username" @"Placeholder text" />
+</div>`
+
   return {
     name: 'vite-plugin-starship',
     async transform(src: string, id: string) {
@@ -17,7 +30,7 @@ function starshipPlugin() {
         const styleMatch = fileContent.match(/<style>([\s\S]*?)<\/style>/)
 
         const templateContent = templateMatch ? templateMatch[1] : ''
-        const templateParsed = new StarshipParser({ ecmaVersion: "latest" }, templateMatch ? templateMatch[1] : '')
+        const templateParsed = new StarshipParser({ ecmaVersion: "latest" }, testCode)
         const scriptContent = scriptMatch ? scriptMatch[1] : ''
         const styleContent = styleMatch ? styleMatch[1] : ''
         
