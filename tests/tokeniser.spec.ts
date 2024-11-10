@@ -10,7 +10,7 @@ const code = `
     <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [50,50]/>
     <a {../link}>Link here</a>
     <label {username}>Username:</label>
-    <input {text} "#username" @"Placeholder text">
+    <input {text} "#username" @"Placeholder text" />
 </div>`
 
 test.describe('Tokeniser tests', () => {
@@ -315,15 +315,15 @@ test.describe('Tokeniser tests', () => {
             {
               type: 'input',
               isClosing: false,
-              isSelfClosing: false,
+              isSelfClosing: true,
               attributes: new Set<StarshipAttribute>([
                 { name: 'type', value: 'text'},
                 { name: 'id', value: 'username'},
                 { name: 'placeholder', value: 'Placeholder text'}
               ]),
-              content: '<input {text} "#username" @"Placeholder text">',
+              content: '<input {text} "#username" @"Placeholder text" />',
               start: 362,
-              end: 408
+              end: 410
             },
             {
               type: 'div',
@@ -331,8 +331,8 @@ test.describe('Tokeniser tests', () => {
               isSelfClosing: false,
               attributes: null,
               content: '</div>',
-              start: 409,
-              end: 415
+              start: 411,
+              end: 417
             }
           ])
     })

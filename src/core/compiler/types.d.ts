@@ -2,6 +2,10 @@ import { Token, TokenType, Position } from "acorn"
 
 export type ASTNode = {
     type: 'Element' | 'Text' | 'Attribute'
+    tagName?: string
+    attributes?: StarshipAttribute[]
+    children?: ASTNode[]
+    content?: string
 }
 
 export interface ElementNode extends ASTNode {
@@ -28,9 +32,9 @@ export interface CompilerOptions {
 }
 
 export interface StarshipAttribute {
-    type: 'class' | 'id' | 'event' | 'path' | 'attribute' | 'type' | 'for' | 'placeholder' | 'alt'
-    name?: string
-    value: string | boolean | null
+    name: string
+    value: string
+    // value: string | boolean | null
 }
 
 export interface StarshipToken extends Token {
