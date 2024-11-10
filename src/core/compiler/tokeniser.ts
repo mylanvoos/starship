@@ -4,22 +4,20 @@ import { getAttributePatterns, getGeneralPatterns } from './utils'
 
 export function tokeniser(input: string): StarshipToken[] {
     const result: StarshipToken[] = []
-
-    const { TEXT_TAG } = getGeneralPatterns()
-
+    const { TEXT_TAGS } = getGeneralPatterns()
     let match
 
     /** 
      *  Matching tags will make match[1] defined 
      *  Matching text will make match[3] defined
      */
-    while ((match = TEXT_TAG.exec(input)) !== null) {
+    while ((match = TEXT_TAGS.exec(input)) !== null) {
 
         if (match[1]) {
             const tagContent = match[0]
 
             const start = match.index
-            const end = TEXT_TAG.lastIndex
+            const end = TEXT_TAGS.lastIndex
             const isSelfClosing = tagContent.includes("/>")
 
             const { tagType, isClosing, attributes }= parseTag(tagContent)
@@ -33,11 +31,11 @@ export function tokeniser(input: string): StarshipToken[] {
                 start: start,
                 end: end
             })
-        } else if (match[2]) {
+        } else if (match[3]) {
 
-            const textContent = match[2]
+            const textContent = match[3]
             const start = match.index
-            const end = TEXT_TAG.lastIndex
+            const end = TEXT_TAGS.lastIndex
 
             if (textContent.trim() !== '') {
                 result.push({
@@ -57,30 +55,35 @@ function parseTag(input: string): {
     attributes: Set<StarshipAttribute>,
     isClosing: boolean
 } {
-    const { OPENING_TAG, CLOSING_TAG } = getGeneralPatterns()
-
+    const { TAGS } = getGeneralPatterns()
     let match
 
-    if ((match = OPENING_TAG.exec(input)) !== null) {
-        const tagName = match[1]
-        let attributes = match[2]?.trim() || ""
-        if (attributes.at(-1) === '/') {
-            attributes = attributes.substring(0, attributes.length - 1)
-        }
-        const attributeSet = splitAttributes(tagName, attributes)
-        console.log(attributeSet)
-
-        return {
-            tagType: tagName,
-            isClosing: false,
-            attributes: attributeSet
-        }
-    } else if ((match = CLOSING_TAG.exec(input)) !== null) {
-        const closingTagName = match[3];
-        return {
-            tagType: closingTagName,
-            attributes: null,
-            isClosing: true
+    /** 
+     *  Matching opening tags will make match[1] defined 
+     *  Matching closing text will make match[3] defined
+     */
+    while ((match = TAGS.exec(input)) !== null) {
+        if (match[1]) {
+            const tagName = match[1]
+            let attributes = match[2]?.trim() || ""
+            if (attributes.at(-1) === '/') {
+                attributes = attributes.substring(0, attributes.length - 1)
+            }
+            const attributeSet = splitAttributes(tagName, attributes)
+            console.log(attributeSet)
+    
+            return {
+                tagType: tagName,
+                isClosing: false,
+                attributes: attributeSet
+            }
+        } else if (match[3]) {
+            const closingTagName = match[3]
+            return {
+                tagType: closingTagName,
+                attributes: null,
+                isClosing: true
+            }
         }
     }
     return null
@@ -125,7 +128,7 @@ function splitAttributes(tag: string, attributesString: string): Set<StarshipAtt
             attributes.add(attributeList[i])
         }
     }
-    return attributes
+    return attributes.size > 0 ? attributes : null
 }
 
 // TODO: Optimise and clean this up. Proper handling of width/height shortcuts in img instead of returning as Array

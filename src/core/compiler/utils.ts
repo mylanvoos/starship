@@ -1,7 +1,6 @@
 const PATTERNS = {
-    TEXT_TAGS: /(<[^>]+>)|([^<]+)/g, // Matches opening and closing tags
-    OPENING_TAG: /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>/,
-    CLOSING_TAG: /<\/(\w+)>/,
+    TEXT_TAGS: /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g, // Matches tags and text
+    TAGS: /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|<\/(\w+)>/, // Matches opening and closing tags
     
     QUOTES: /^(['"])(.*)\1$/,                // Matches text wrapped in single or double quotes
     CURLY_BRACKETS: /^{(.*)}$/,              // Matches text wrapped in curly braces (special shortcuts)
@@ -37,8 +36,7 @@ export function getAttributePatterns(attribute: string) {
 
 export function getGeneralPatterns() {
     return {
-        TEXT_TAG: PATTERNS.TEXT_TAGS,
-        OPENING_TAG: PATTERNS.OPENING_TAG,
-        CLOSING_TAG: PATTERNS.CLOSING_TAG
+        TEXT_TAGS: PATTERNS.TEXT_TAGS,
+        TAGS: PATTERNS.TAGS
     }
 }
