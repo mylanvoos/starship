@@ -10,7 +10,7 @@ const code = `
     <h1 ".text" style={color:red;}>Starship 🛰️</h1>
     <button {submit} on:click={() => setCounter(counter.value - 1)}> -1 </button>
     { counter }
-    <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [50,50]/>
+    <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [50,50] />
     <a {../link}>Link here</a>
     <label {username}>Username:</label>
     <input {text} "#username" @"Placeholder text" />
@@ -20,6 +20,7 @@ export class StarshipParser extends Parser {
     private length: number
     private tokens: StarshipToken[]
     private currentTokenIndex: number
+    private ast: ASTNode
 
     constructor(options: acorn.Options, source: string) {
         super(options, source)
@@ -34,7 +35,8 @@ export class StarshipParser extends Parser {
     
     read() {
         while (this.currentTokenIndex < this.length) {
-          console.log(this.parseElement())
+          this.ast = this.parseElement()
+          console.log(JSON.stringify(this.ast, null, 1))
         }
     }
 
@@ -59,7 +61,7 @@ export class StarshipParser extends Parser {
         return {
           type: 'Element',
           tagName: tagName,
-          attributes: Array.from(token.attributes ? token.attributes : []),
+          attributes: attributes
         }
       } else {
         const tagName: string = token.type
@@ -75,7 +77,7 @@ export class StarshipParser extends Parser {
             children.push(nestedElement)
           }
         }
-  
+        
         this.currentTokenIndex++
         return { 
           type: token.type === 'text'? 'Text' : 'Element',
@@ -91,6 +93,5 @@ export class StarshipParser extends Parser {
       if (this.currentTokenIndex >= this.length) return false
       const currentToken = this.tokens[this.currentTokenIndex]
       return currentToken.type === token.type && currentToken.isClosing
-
     }
 }

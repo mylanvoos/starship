@@ -211,6 +211,6 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
     }
     return [{
         name: ATTR_NAME,
-        value: attribute
+        value: attribute.replace(`${ATTR_NAME}=`, '')
     }]
 }

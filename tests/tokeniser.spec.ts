@@ -210,7 +210,7 @@ test.describe('Tokeniser tests', () => {
                 isSelfClosing: false,
                 attributes: new Set<StarshipAttribute>([ 
                     { name: 'className', value: 'text'},
-                    { name: 'style', value: 'style={color:red;}'}
+                    { name: 'style', value: '{color:red;}'}
                 ]),
                 content: '<h1 ".text" style={color:red;}>',
                 start: 24,
