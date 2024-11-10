@@ -15,6 +15,10 @@ export function capitaliseFirstLetter(str: string) {
     return str.at(0).toUpperCase() + str.substring(1)
 }
 
+export function decapitaliseFirstLetter(str: string) {
+    return str.at(0).toLowerCase() + str.substring(1)
+}
+
 export function extractBetween(source: string, ...delimiters: string[]): string | null {
     if (delimiters.length < 2) {
         throw new Error('At least two delimiters are required')

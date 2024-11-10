@@ -1,4 +1,4 @@
-import { capitaliseFirstLetter } from "../utils"
+import { capitaliseFirstLetter, decapitaliseFirstLetter } from "../utils"
 import { ASTNode, StarshipAttribute } from "./types";
 import { getAttributePatterns } from "./utils";
 
@@ -52,14 +52,18 @@ export class StarshipTransformer {
         let strArray: string[] = []
 
         for (const attr of attributes) {
-            const { SETTER_BOOL, SETTER_INT } = getAttributePatterns(attr.value)
-            if (SETTER_INT) {
-                const variableName = SETTER_INT[1].toLowerCase()
-                const operator = SETTER_INT[2]
-                const operand = SETTER_INT[3]
-                attr.value = `() => set${capitaliseFirstLetter(variableName)}(${variableName}.value ${operator} ${operand})`
+            const { SETTER_BOOL, SETTER_VAL } = getAttributePatterns(attr.value)
+            if (SETTER_VAL) {
+                const variableName = decapitaliseFirstLetter(SETTER_VAL[1])
+                const operator = SETTER_VAL[2]
+                const operand = SETTER_VAL[3]
+                if (operator === '') {
+                    attr.value = `() => set${capitaliseFirstLetter(variableName)}(${operand}.value)`
+                } else {
+                    attr.value = `() => set${capitaliseFirstLetter(variableName)}(${variableName}.value ${operator} ${operand})`
+                }
             } else if (SETTER_BOOL) {
-                const variableName = SETTER_BOOL[1].toLowerCase()
+                const variableName = decapitaliseFirstLetter(SETTER_BOOL[1])
                 attr.value = `() => set${capitaliseFirstLetter(variableName)}(!${variableName}.value)`
             } 
             strArray.push(attr.name.includes("on") ? ` ${attr.name}={${attr.value}}` : ` ${attr.name}="${attr.value}"`)

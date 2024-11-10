@@ -1,12 +1,14 @@
 <div ".container">
   <h1 "#text">Starship 🛰️</h1>
   <p "#text">The classic button experiment to test reactivity...</p>
-  <button on:click={() => setCounter(counter.value - 1)}> -1 </button>
+  <button on:click={setCounter(-1)}> -1 </button>
       { counter }
-  <button on:click={() => setCounter(counter.value + 1)}> +1 </button>
+  <button on:click={setCounter(+1)}> +1 </button>
+  <button on:click={setVoyagerThreshold(counter)}> Set Voyager activation code </button>
 </div>
 <div ".container2">
   <p "#text">{ message }</p>
+  { voyagerThreshold }
   <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [450,250] />
   <a {../link}>Link here</a>
 </div>

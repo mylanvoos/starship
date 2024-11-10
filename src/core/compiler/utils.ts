@@ -1,5 +1,3 @@
-import { StarshipAttribute } from "./types";
-
 const PATTERNS = {
     TEXT_TAGS: /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g, // Matches tags and text
     TAGS: /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|<\/(\w+)>/, // Matches opening and closing tags
@@ -10,7 +8,7 @@ const PATTERNS = {
     PLACEHOLDER: /^@(['"])(.*)\1$/,                       // Matches text starting with '@'
     EVENT_NAME: /on:([^=]+)=/,
     ATTR_NAME: /([^=]+)=/,
-    SETTER_INT: /set([A-Z][a-zA-Z0-9]*)\(([-+])(\d+|\w+|\([^()]*\))\)/,
+    SETTER_VAL: /set([A-Z][a-zA-Z0-9]*)\(([-+]|''|""|)(\d+|\w+|\([^()]*\))\)/, // Matches setter shortcuts
     SETTER_BOOL: /set([A-Z][a-zA-Z0-9]*)\(!\)/
 }
 
@@ -25,7 +23,7 @@ export function getAttributePatterns(attribute: string) {
 
     const EVENT_NAME = attribute.match(PATTERNS.EVENT_NAME) ? attribute.match(PATTERNS.EVENT_NAME)[1].trim() : null
     const ATTR_NAME = attribute.match(PATTERNS.ATTR_NAME) ? attribute.match(PATTERNS.ATTR_NAME)[1].trim() : null
-    const SETTER_INT = attribute.match(PATTERNS.SETTER_INT) 
+    const SETTER_VAL = attribute.match(PATTERNS.SETTER_VAL) 
     const SETTER_BOOL = attribute.match(PATTERNS.SETTER_BOOL) 
     return {
         IN_QUOTES,
@@ -38,7 +36,7 @@ export function getAttributePatterns(attribute: string) {
         EVENT_NAME,
         ATTR_NAME,
         SETTER_BOOL,
-        SETTER_INT
+        SETTER_VAL
     };
 }
 
