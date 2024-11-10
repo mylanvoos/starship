@@ -1,29 +1,25 @@
-
-import { lookAheadFor } from '../utils'
-import * as acorn from 'acorn'
-import jsx from 'acorn-jsx'
 import { StarshipAttribute, StarshipToken } from './types'
+import { getAttributePatterns, getGeneralPatterns } from './utils'
 
 
 export function tokeniser(input: string): StarshipToken[] {
     const result: StarshipToken[] = []
 
-    const REGEX = /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g
+    const { TEXT_TAG } = getGeneralPatterns(input)
+
     let match
 
     /** 
      *  Matching tags will make match[1] defined 
      *  Matching text will make match[3] defined
      */
-    while ((match = REGEX.exec(input)) !== null) {
+    while ((match = TEXT_TAG.exec(input)) !== null) {
 
         if (match[1]) {
             const tagContent = match[0]
 
-            // console.log("Tag:", tagContent)
-
             const start = match.index
-            const end = REGEX.lastIndex
+            const end = TEXT_TAG.lastIndex
             const isSelfClosing = tagContent.includes("/>")
 
             const { tagType, isClosing, attributes }= parseTag(tagContent)
@@ -40,10 +36,9 @@ export function tokeniser(input: string): StarshipToken[] {
         } else if (match[3]) {
 
             const textContent = match[3]
-            // console.log("Text:", textContent)
 
             const start = match.index
-            const end = REGEX.lastIndex
+            const end = TEXT_TAG.lastIndex
 
             if (textContent.trim() !== '') {
                 result.push({
@@ -55,7 +50,6 @@ export function tokeniser(input: string): StarshipToken[] {
             }
         }
     }
-
     return result
 }
 
@@ -64,38 +58,30 @@ function parseTag(input: string): {
     attributes: Set<StarshipAttribute>,
     isClosing: boolean
 } {
-    const MATCH_TAGS = /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|<\/(\w+)>/g
-    const MATCH_ATTRIBUTES = /(\.[\w-]+)|([\w-]+)(?:=(\{[^}]*\}|"[^"]*"|'[^']*'))?/g
+    const { OPENING_TAG, CLOSING_TAG } = getGeneralPatterns(input)
 
     let match
 
-    /** 
-     *  Matching opening tags will make match[1] defined 
-     *  Matching closing tags will make match[3] defined
-     */
-    while ((match = MATCH_TAGS.exec(input)) !== null) {
-        if (match[1]) {
-            const tagName = match[1]
-            const attributes = match[2]?.trim() || ""
-            const attributeSet = splitAttributes(tagName, attributes)
-            console.log(attributeSet)
+    if ((match = OPENING_TAG.exec(input)) !== null) {
+        const tagName = match[1]
+        const attributes = match[2]?.trim() || ""
+        const attributeSet = splitAttributes(tagName, attributes)
+        console.log(attributeSet)
 
-            return {
-                tagType: tagName,
-                isClosing: false,
-                attributes: attributes
-            }
-        } else if (match[3]) {
-            const closingTagName = match[3];
-            return {
-                tagType: closingTagName,
-                attributes: null,
-                isClosing: true
-            }
+        return {
+            tagType: tagName,
+            isClosing: false,
+            attributes: attributes
+        }
+    } else if ((match = CLOSING_TAG.exec(input)) !== null) {
+        const closingTagName = match[3];
+        return {
+            tagType: closingTagName,
+            attributes: null,
+            isClosing: true
         }
     }
-
-    return null;
+    return null
 }
 
 function splitAttributes(tag: string, attributesString: string): Set<StarshipAttribute> {
@@ -110,8 +96,7 @@ function splitAttributes(tag: string, attributesString: string): Set<StarshipAtt
 
         if (char === ' ' && !inDoubleQuotes && !inSingleQuotes && braceDepth === 0) {
             if (attr.length > 0) {
-                const attribute = createStarshipAttribute(tag, attr)
-                attributes.add(attribute)
+                attributes.add(createStarshipAttribute(tag, attr))
                 attr = ''
             }
             continue
@@ -130,8 +115,7 @@ function splitAttributes(tag: string, attributesString: string): Set<StarshipAtt
         }
     }
     if (attr.length > 0) {
-        const attribute = createStarshipAttribute(tag, attr)
-        attributes.add(attribute)
+        attributes.add(createStarshipAttribute(tag, attr))
     }
     return attributes
 }
@@ -140,14 +124,11 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
     /** 
      * ".container" is shorthand for class="container"
      * "#id" is shorthand for id="id"
+     * and so on
      */
-    const QUOTES = ["'", '"']
-    const IN_QUOTES = QUOTES.includes(attribute.at(0)) && QUOTES.includes(attribute.at(-1))
-    const IN_CURLY_BRACKETS = attribute.at(0) === '{' && attribute.at(-1) === '}'
-    const IN_SQUARE_BRACKETS = attribute.at(0) === '[' && attribute.at(-1) === ']'
-    const IS_PLACEHOLDER = attribute.at(0) === '@'
 
-    const INSIDE_BRACKETS = attribute.substring(1, attribute.length - 1)
+    const { IN_QUOTES, IN_CURLY_BRACKETS, INSIDE_BRACKETS } = getAttributePatterns(attribute)
+    
 
     console.log(tag, attribute)
     if (attribute.at(1) === "." && IN_QUOTES) {
@@ -155,27 +136,34 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
             type: 'class',
             value: attribute.substring(2, attribute.length - 1)
         }
-    } else if (attribute.at(1) === "#" && IN_QUOTES) {
+    } 
+    if (attribute.at(1) === "#" && IN_QUOTES) {
         return {
             type: 'id',
             value: attribute.substring(2, attribute.length - 1)
         }
-    } else if (tag === 'img' && IN_CURLY_BRACKETS) {
+    } 
+    if ((tag === 'img' || tag === 'a') && IN_CURLY_BRACKETS) {
         return {
             type: 'path',
-            name: 'src',
+            name: tag === 'img' ? 'src' : 'href',
             value: INSIDE_BRACKETS
         }
-    } else if (tag === 'button' && IN_CURLY_BRACKETS) {
+    } 
+    if ((tag === 'button' || tag === 'input') && IN_CURLY_BRACKETS) {
         return {
             type: 'type',
-            name: 'type',
             value: INSIDE_BRACKETS
         }
-    } else {
+    } 
+    if (tag === 'label' && IN_CURLY_BRACKETS) {
         return {
-            type: 'attribute',
-            value: attribute
+            type: 'for',
+            value: INSIDE_BRACKETS
         }
+    } 
+    return {
+        type: 'attribute',
+        value: attribute
     }
 }
