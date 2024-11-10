@@ -1,20 +1,10 @@
 import * as acorn from 'acorn'
 import jsx from 'acorn-jsx'
 
-import { tokeniser } from "./tokeniser"
-import { ASTNode, StarshipAttribute, StarshipToken } from './types'
+import { StarshipTokeniser } from "./tokeniser"
+import { ASTNode, ParserOptions, StarshipAttribute, StarshipToken } from './types'
 
 const Parser = acorn.Parser.extend(jsx())
-const code = `
-<div "#container">
-    <h1 ".text" style={color:red;}>Starship 🛰️</h1>
-    <button {submit} on:click={() => setCounter(counter.value - 1)}> -1 </button>
-    { counter }
-    <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [50,50] />
-    <a {../link}>Link here</a>
-    <label {username}>Username:</label>
-    <input {text} "#username" @"Placeholder text" />
-</div>`
 
 export class StarshipParser extends Parser {
     private length: number
@@ -23,11 +13,11 @@ export class StarshipParser extends Parser {
     private ast: ASTNode[]
     private astString: string // nice JSON representation of the AST tree
 
-    constructor(options: acorn.Options, source: string) {
+    constructor(options: ParserOptions, source: string) {
         super(options, source)
         this.input = this.input.trim() // trim whitespaces
 
-        this.tokens = tokeniser(source) 
+        this.tokens = new StarshipTokeniser(source).getTokens()
         this.currentTokenIndex = 0
         this.length = this.tokens.length
         this.ast = []

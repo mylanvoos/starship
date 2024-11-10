@@ -1,3 +1,5 @@
+import { StarshipAttribute } from "./types";
+
 const PATTERNS = {
     TEXT_TAGS: /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g, // Matches tags and text
     TAGS: /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|<\/(\w+)>/, // Matches opening and closing tags
@@ -45,6 +47,42 @@ export function capitaliseFirstLetter(str: string) {
     return str.at(0).toUpperCase() + str.substring(1)
 }
 
-export function getExpression(str: string) { 
+export function getExpression(input: string, header: string) { 
+    const str = input.replace(header, '')
     return str.substring(1, str.length - 1)
+}
+
+export function splitAttributes(attributesString: string): string[] {
+    const attributes: string[] = []
+    let attr = ''
+    let inDoubleQuotes = false
+    let inSingleQuotes = false
+    let braceDepth = 0
+
+    for (let i = 0; i < attributesString.length; i++) {
+        const char = attributesString[i]
+
+        if (char === ' ' && !inDoubleQuotes && !inSingleQuotes && braceDepth === 0) {
+            if (attr.length > 0) {
+                attributes.push(attr)
+                attr = ''
+            }
+            continue
+        }
+        attr += char
+
+        if (char === '"' && !inSingleQuotes && braceDepth === 0) {
+            inDoubleQuotes = !inDoubleQuotes
+        } else if (char === "'" && !inDoubleQuotes && braceDepth === 0) {
+            inSingleQuotes = !inSingleQuotes
+        } else if (char === '{' && !inDoubleQuotes && !inSingleQuotes) {
+            braceDepth++
+        } else if (char === '}' && !inDoubleQuotes && !inSingleQuotes && braceDepth > 0) {
+            braceDepth--
+        }
+    }
+    if (attr.length > 0) {
+        attributes.push(attr)
+    }
+    return attributes.length > 0 ? attributes : []
 }

@@ -1,4 +1,5 @@
-import { Token, TokenType, Position } from "acorn"
+import { Token, TokenType, Position, Options } from "acorn"
+import { StarshipTokeniser } from "./tokeniser"
 
 /** Technically a lot of these do not have to be mandatory, but it's to prevent bugs */
 export type ASTNode = {
@@ -23,4 +24,9 @@ export interface StarshipToken extends Token {
     start?: number
     end?: number
     content?: string
+}
+
+export interface ParserOptions extends Options {
+    ecmaVersion: ecmaVersion
+    tokeniser: StarshipTokeniser
 }
