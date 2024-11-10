@@ -1,4 +1,4 @@
-## Starship - A novel JSX-based frontend library ###
+## Starship - An experimental JSX-based frontend framework ###
 
 ![](https://raw.githubusercontent.com/mylanvoos/starship/refs/heads/main/public/starship.png)
 
@@ -6,30 +6,30 @@
   <summary>Show Code</summary>
 
 ```jsx
-<template>
-  <div ".container">
-      <h1 "#title">Starship 🛰️</h1>
-      <p>The classic button experiment to test reactivity...</p>
-      <button on:click={setCounter(-1)}> -1 </button>
-        { counter }
-      <button on:click={setCounter(+1)}> +1 </button>
-      <button on:click={setVoyagerThreshold(counter)}> Set Voyager activation code </button>
-      <p>{ message }</p>
-      <label {text}>Voyager online at: { voyagerThreshold }</p>
-      <Show when={voyagerThreshold === counter}>
-        <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
-      </Show>
-  </div>
-</template>
+<div ".container">
+  <h1 "#text">Starship 🛰️</h1>
+  <p "#text">The classic button experiment to test reactivity...</p>
+  <button on:click={setCounter(-1)}> -1 </button>
+      { counter }
+  <button on:click={setCounter(+1)}> +1 </button>
+  <button on:click={setVoyagerThreshold(counter)}> Set Voyager activation code </button>
+  <p "#text">{ message }</p>
+</div>
+<div ".container2">
+  <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [450,250] />
+  <a {../link}>This is a link</a>
+</div>
 
 ```
 ```typescript
 <script>
-const counter = createSignal<number>(0)
-const message = createSignal<string>("")
-const voyagerThreshold = createSignal<number>(5)
+const { counter, message, voyagerThreshold } = createSignals({
+  @counter: 0,
+  message: "",
+  voyagerThreshold: 5
+})
 
-attachToCounter(() => setMessage(counter, [
+attachToCounter(() => setMessage(counter,
   [ when(v => v > 10 || v < -10), effect(() => {
     setCounter(0)
     return "Cannot exceed +=10!"
@@ -37,15 +37,13 @@ attachToCounter(() => setMessage(counter, [
   [ when(v => v === 0), effect("Press a button to get started.")],
   [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter} is between [1, 4] (you can do range-based pattern matching!)`)],
   [ _, effect(`Keep pressing...`) ]
-]))
-  </script>
+))
+</script>
 ```
 ```css
 <style>
 body {
   font-family: "Lucida Console";
-  width: 500px;
-  margin: auto;
 }
 button {
   margin: 0 20px;
@@ -57,43 +55,66 @@ button {
 ```
 </details> 
 
-This is an experiment in making a frontend framework that is *reactive*, can *manage the application state* and *manipulate the DOM*, and has a *component-based architecture*. 
+This is an experiment in creating a custom frontend framework in an attempt to better understand how modern frameworks like React, Vue, Svelte, and Angular work under the hood. Thus, Starship was born.
 
-### Reactivity: an attempt at recreating React's `useState` hook from scratch
+Starship is an experimental framework that implements its own reactive state management, templating syntax, compiler, and JSX-based DOM manipulation. Unlike other frameworks, it does not compile to plain JavaScript but rather converts Starship.uss files into JSX, allowing React to handle the final transformation into JavaScript. Starship places heavy emphasis on *variable naming* and prioritises *conciseness* along with *development speed*. 
 
-```typescript 
-const [counter, setCounter, attach] = createSignal<number>(0)
-```
- 
-The way React implements the useState hook is by having a state array and a pointer to know which useState we are currently on. After the useState function is fired, it increments this pointer so that the next useState function will work with its state, and so on. 
+### Reactivity
 
-We use a similar approach here, using a global signal store to keep track of the application state. The addition of the attacher function allows you to register listener functions to a signal/state that will be automatically triggered whenever the signal/state changes value.
+#### How It Works:
 
-### A little functional(ity)...
+- Reactivity in Starship is controlled by `Signals` and their attached listener functions, allowing you to set up reactions to signal changes.
+- Starship uses a global `SignalStore`, tracking application state for each signal.
+- Each signal has an associated `Sentry` for managing listeners, functions that run whenever the signal's value changes.
+- `SignalGuard` protects signal values, allowing changes only through the generated setter function.
 
-Inspired by Rust, Starship lets you do pattern matching in its signal setters or using the `match()` function.
+You can create signals using either the `createSignal` or the `createSignals` methods.
+
+#### Using the `createSignal` method
+
+In Starship, `createSignal` creates a reactive signal with a `getter`, `setter`, and `attacher`. This setup allows for a streamlined reactivity system inspired by React's `useState` hook (in fact, this started as an attempt to 'clone' React!)
+
+`const [counter, setCounter, attach] = createSignal(0)`
+
+You can explicitly specify the names for the `setter` and the `attacher` methods using `createSignal`.
+
+#### Using the `createSignals` method
+
+The `createSignals` method allows you to set up multiple individual signals at the same time. When you call this method, Starship automatically generates both a `setter` (e.g., `setCounter`) and an `attacher` (e.g., `attachToCounter`) for each of your variables. They both obey a strict naming convention.
+
+- By default, a `var` variable created through `createSignals` will have `setVar` and `attachToVar` generated.
+- If you want to avoid creating unnecessary attachers, simply add a `@` symbol before the variable name.
 
 ```typescript
-const [counter, setCounter, attachToCounter] = createSignal<number>(0)
-const [message, setMessage, attachToMessage] = createSignal<string>('')
+const { counter, message, voyagerThreshold } = createSignals({
+  counter: 0,
+  @message: "",
+  voyagerThreshold: 5
+})
+```
 
-attachToCounter(() => setMessage(counter.value, [
-  [ when(v => v >= 10 || v <= -10), effect("Cannot exceed +=10!") ],
+### Using Pattern Matching for Functional Control
+
+Inspired by Rust, Starship enables pattern matching for control flows. This is powerful for handling different cases based on the signal value.
+
+```typescript
+attachToCounter(() => setMessage(counter.value, 
+  [ when(v => v >= 10 || v <= -10), effect(() => {
+    setCounter(0)
+    return "Cannot exceed +=10!"
+  }) ],
   [ when(v => v === 0), effect("Press a button to get started.")],
   [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
   [ _, effect(`Keep pressing...`) ]
 ]))
 ```
 
-### Vue-like syntax 
-`<template>`, `<script>`, and `<style>` here! A custom Vite plugin was needed to make this work. By default, `<template>` uses JSX and `<script>` uses TypeScript.
-
 ### Conditional rendering with `<Show when={...}>`
-Whatever's inside the `<Show>` block gets rendered when the expression inside `when` evaluates to true. 
+The <Show> component in Starship lets you render elements based on conditions in a simple, readable way. It renders the content inside <Show> only when the when condition is met
 
 ```jsx
-<Show when={() => voyagerThreshold.value === counter.value}>
-  <img src='https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg' />
+<Show when={voyagerThreshold === counter}>
+  <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
 </Show>
 ```
 

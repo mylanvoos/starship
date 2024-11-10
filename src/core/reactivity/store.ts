@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-class Store {
+class SignalStore {
     private signals: Map<number, Signal<any>> = new Map()
     private index: number  = 0
     private sentry: Sentry = new Sentry()
@@ -93,7 +93,7 @@ type Setter<T> = {
 }
 
 // Exporting createSignal so it can be used globally without exposing Store
-const storeInstance = new Store()
+const storeInstance = new SignalStore()
 
 export const createSignal = storeInstance.createSignal.bind(storeInstance)
 export const createSignals = storeInstance.createSignals.bind(storeInstance)
