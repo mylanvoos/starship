@@ -14,12 +14,11 @@ export class StarshipTransformer {
 
     toJSX(): string {
         this.jsx = this.transformNodes(this.ast)
-
         console.log(this.jsx)
-        
-        return "" // placeholder
+        return this.jsx
     }
-    transformNodes(nodes: ASTNode[]) {
+
+    transformNodes(nodes: ASTNode[]): string {
         if (nodes.length === 0) {
             return ''
         }
@@ -30,20 +29,27 @@ export class StarshipTransformer {
         return result
     }
 
-    transformNode(node: ASTNode) {
+    transformNode(node: ASTNode): string {
         if (node.type === 'Text') {
-            return node.content  
+            return `${"    ".repeat(this.depth)}${node.content}\n`
         }
-    
-        if (node.tagName) {
-            return `<${node.tagName}${this.transformAttributes(node.attributes)}>\n\t${this.transformNodes(node.children)}</${node.tagName}>\n`
+
+        if (node.type === 'Element' && node.tagName) {
+            const openingTag = `${"    ".repeat(this.depth)}<${node.tagName}${this.transformAttributes(node.attributes)}>`
+            const closingTag = `</${node.tagName}>`
+            
+            this.depth++
+            const childrenContent = this.transformNodes(node.children);
+            this.depth--
+
+            return `${openingTag}\n${childrenContent}${"    ".repeat(this.depth)}${closingTag}\n`
         }
         return ''
     }
-    transformAttributes(attributes: StarshipAttribute[]) {
-        let str = ""
-        const addToString = (name: string, value: string) => {str += ` ${name}="${value}"` }
-        attributes.flatMap(e => addToString(e.name, e.value))
-        return str
+
+    transformAttributes(attributes: StarshipAttribute[]): string {
+        return attributes
+            .map(attr => ` ${attr.name}="${attr.value}"`)
+            .join('')
     }
 }
