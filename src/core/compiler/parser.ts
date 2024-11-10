@@ -30,8 +30,6 @@ export class StarshipParser extends Parser {
           this.ast.push(this.parseElement())
         }
         this.astString = JSON.stringify(this.ast, null, 2)
-
-        console.log(this.astString)
     }
 
     parseElement(): ASTNode {

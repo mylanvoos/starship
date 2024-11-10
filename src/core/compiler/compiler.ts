@@ -12,5 +12,5 @@ export function compile(source: string): string {
     }, source)
     const ast = parser.getAST()
     const transformer = new StarshipTransformer(ast)
-    return transformer.transformToJSX()
+    return transformer.toJSX()
 }
