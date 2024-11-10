@@ -1,11 +1,12 @@
 import { Token, TokenType, Position } from "acorn"
 
+/** Technically a lot of these do not have to be mandatory, but it's to prevent bugs */
 export type ASTNode = {
     type: 'Element' | 'Text' | 'Attribute'
-    tagName?: string
-    attributes?: StarshipAttribute[]
-    children?: ASTNode[]
-    content?: string
+    tagName: string
+    attributes: StarshipAttribute[]
+    children: ASTNode[]
+    content: string
 }
 
 export interface StarshipAttribute {

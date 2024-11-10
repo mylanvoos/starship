@@ -20,25 +20,28 @@ export class StarshipParser extends Parser {
     private length: number
     private tokens: StarshipToken[]
     private currentTokenIndex: number
-    private ast: ASTNode
+    private ast: ASTNode[]
     private astString: string // nice JSON representation of the AST tree
 
     constructor(options: acorn.Options, source: string) {
         super(options, source)
         this.input = this.input.trim() // trim whitespaces
 
-        this.tokens = tokeniser(code) 
+        this.tokens = tokeniser(source) 
         this.currentTokenIndex = 0
         this.length = this.tokens.length
+        this.ast = []
 
         this.read()
     }
     
     read() {
         while (this.currentTokenIndex < this.length) {
-          this.ast = this.parseElement()
-          this.astString = JSON.stringify(this.ast, null, 1)
+          this.ast.push(this.parseElement())
         }
+        this.astString = JSON.stringify(this.ast, null, 1)
+
+        console.log(this.astString)
     }
 
     parseElement(): ASTNode {
@@ -49,7 +52,10 @@ export class StarshipParser extends Parser {
         this.currentTokenIndex++
         return {
           type: 'Text',
-          content: token.content
+          content: token.content,
+          tagName: null,
+          attributes: [],
+          children: [],
         }
       } else if (token.isClosing) {
         this.currentTokenIndex++
@@ -62,7 +68,9 @@ export class StarshipParser extends Parser {
         return {
           type: 'Element',
           tagName: tagName,
-          attributes: attributes
+          attributes: attributes,
+          children: [],
+          content: token.content
         }
       } else {
         const tagName: string = token.type
@@ -84,7 +92,8 @@ export class StarshipParser extends Parser {
           type: token.type === 'text'? 'Text' : 'Element',
           tagName: tagName,
           attributes: attributes,
-          children: children
+          children: children,
+          content: token.content
         }
       }
       
@@ -98,5 +107,8 @@ export class StarshipParser extends Parser {
 
     getASTString(): string {
       return this.astString
+    }
+    getAST(): ASTNode[] {
+      return this.ast
     }
 }
