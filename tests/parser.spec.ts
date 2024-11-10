@@ -191,7 +191,7 @@ test('Parses element with style attribute and multiple nested children', () => {
         content: '<div style={color: red;}>',
         tagName: 'div',
         attributes: [
-            { name: 'style', value: '{color: red;}' }
+            { name: 'style', value: 'color: red;' }
         ],
         children: [
             {

@@ -127,7 +127,7 @@ test.describe('Tokeniser tests', () => {
                 isClosing: false,
                 isSelfClosing: false,
                 attributes: new Set<StarshipAttribute>([
-                    { name: 'on:click', value: '{() => setCounter(counter + 1)}' }
+                    { name: 'onClick', value: '() => setCounter(counter + 1)' }
                 ]),
                 content: '<button on:click={() => setCounter(counter + 1)}>',
                 start: 0,
@@ -218,7 +218,7 @@ test.describe('Tokeniser tests', () => {
                 isSelfClosing: false,
                 attributes: new Set<StarshipAttribute>([ 
                     { name: 'className', value: 'text'},
-                    { name: 'style', value: '{color:red;}'}
+                    { name: 'style', value: 'color:red;'}
                 ]),
                 content: '<h1 ".text" style={color:red;}>',
                 start: 24,

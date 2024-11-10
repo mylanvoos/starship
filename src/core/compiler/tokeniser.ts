@@ -86,10 +86,10 @@ export class StarshipTokeniser {
                 if (attributes.at(-1) === '/') {
                     attributes = attributes.substring(0, attributes.length - 1)
                 }
-                const attributeSet = new Set<StarshipAttribute>(
+                const attributeSet = splitAttributes(attributes) ? new Set<StarshipAttribute>(
                     splitAttributes(attributes)
-                        .flatMap(attr => this.processAttribute(tagName, attr))
-                )
+                        .flatMap(attr => this.processAttribute(tagName, attr))) : null
+
                 return {
                     tagType: tagName,
                     isClosing: false,

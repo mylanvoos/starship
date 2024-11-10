@@ -84,5 +84,5 @@ export function splitAttributes(attributesString: string): string[] {
     if (attr.length > 0) {
         attributes.push(attr)
     }
-    return attributes.length > 0 ? attributes : []
+    return attributes.length > 0 ? attributes : null
 }
