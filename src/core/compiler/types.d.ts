@@ -1,11 +1,25 @@
 import { Token, TokenType, Position } from "acorn"
 
 export type ASTNode = {
-    type: 'Element' | 'Text' | 'Expression'
-    tag?: string
-    attribute?: Record<string, string>
-    children?: ASTNode[]
-    value?: string
+    type: 'Element' | 'Text' | 'Attribute'
+}
+
+export interface ElementNode extends ASTNode {
+    type: 'Element'
+    tagName: string
+    attributes: AttributeNode[]
+    children: ASTNode[]
+}
+
+export interface TextNode extends ASTNode {
+    type: 'Text'
+    content: string
+}
+
+export interface AttributeNode extends ASTNode {
+    type: 'Attribute'
+    name: string
+    value: string
 }
 
 export interface CompilerOptions {
@@ -36,8 +50,4 @@ export interface ParserState {
         start: number
     }>
     currentAttributes: Set<StarshipAttribute>
-}
-
-export type StarshipTokenType = TokenType & {
-    updateContent?: (prevType: TokenType) => void
 }

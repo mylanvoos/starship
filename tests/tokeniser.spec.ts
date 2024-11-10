@@ -25,7 +25,7 @@ test.describe('Tokeniser tests', () => {
                 type: 'div',
                 isClosing: false,
                 isSelfClosing: false,
-                attributes: new Set<StarshipAttribute>([{ type: 'class', value: 'container'}]),
+                attributes: new Set<StarshipAttribute>([{ name: 'className', value: 'container'}]),
                 content: '<div ".container">',
                 start: 0,
                 end: 18
@@ -51,7 +51,7 @@ test.describe('Tokeniser tests', () => {
                 type: 'section',
                 isClosing: false,
                 isSelfClosing: false,
-                attributes: new Set<StarshipAttribute>([{ type: 'id', value: 'main'}]),
+                attributes: new Set<StarshipAttribute>([{ name: 'id', value: 'main'}]),
                 content: '<section "#main">',
                 start: 0,
                 end: 17
@@ -79,7 +79,7 @@ test.describe('Tokeniser tests', () => {
                 isClosing: false,
                 isSelfClosing: true,
                 attributes: new Set<StarshipAttribute>([
-                    { type: 'path', name: 'src', value: 'https://example.com/image.jpg' }
+                    { name: 'src', value: 'https://example.com/image.jpg' }
                 ]),
                 content: '<img {https://example.com/image.jpg}/>',
                 start: 0,
@@ -99,9 +99,9 @@ test.describe('Tokeniser tests', () => {
                 isClosing: false,
                 isSelfClosing: false,
                 attributes: new Set<StarshipAttribute>([
-                    { type: 'type', value: 'text' },
-                    { type: 'id', value: 'username' },
-                    { type: 'placeholder', value: 'Enter username' }
+                    { name: 'type', value: 'text' },
+                    { name: 'id', value: 'username' },
+                    { name: 'placeholder', value: 'Enter username' }
                 ]),
                 content: '<input {text} "#username" @"Enter username">',
                 start: 0,
@@ -121,7 +121,7 @@ test.describe('Tokeniser tests', () => {
                 isClosing: false,
                 isSelfClosing: false,
                 attributes: new Set<StarshipAttribute>([
-                    { type: 'event', name: 'click', value: '{() => setCounter(counter + 1)}' }
+                    { name: 'on:click', value: '{() => setCounter(counter + 1)}' }
                 ]),
                 content: '<button on:click={() => setCounter(counter + 1)}>',
                 start: 0,
@@ -199,7 +199,7 @@ test.describe('Tokeniser tests', () => {
                 type: 'div',
                 isClosing: false,
                 isSelfClosing: false,
-                attributes: new Set<StarshipAttribute>([ { type: 'id', value: 'container'}]),
+                attributes: new Set<StarshipAttribute>([ { name: 'id', value: 'container'}]),
                 content: '<div "#container">',
                 start: 1,
                 end: 19
@@ -209,8 +209,8 @@ test.describe('Tokeniser tests', () => {
                 isClosing: false,
                 isSelfClosing: false,
                 attributes: new Set<StarshipAttribute>([ 
-                    { type: 'class', value: 'text'},
-                    { type: 'attribute', name: 'style', value: 'style={color:red;}'}
+                    { name: 'className', value: 'text'},
+                    { name: 'style', value: 'style={color:red;}'}
                 ]),
                 content: '<h1 ".text" style={color:red;}>',
                 start: 24,
@@ -231,10 +231,9 @@ test.describe('Tokeniser tests', () => {
                 isClosing: false,
                 isSelfClosing: false,
                 attributes: new Set<StarshipAttribute>([
-                  { type: 'type', value: 'submit' },
+                  { name: 'type', value: 'submit' },
                   {
-                      type: 'event',
-                      name: 'click',
+                      name: 'on:click',
                       value: '{() => setCounter(counter.value - 1)}'
                   }
                 ]),
@@ -264,13 +263,12 @@ test.describe('Tokeniser tests', () => {
               isSelfClosing: true,
               attributes: new Set<StarshipAttribute>([
                 {
-                    type: 'path',
                     name: 'src',
                     value: 'https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg'
                 },
-                { type: 'alt', value: 'NASA Voyager' },
-                { type: 'attribute', name: 'width', value: '50' },
-                { type: 'attribute', name: 'height', value: '50' }
+                { name: 'alt', value: 'NASA Voyager' },
+                { name: 'width', value: '50' },
+                { name: 'height', value: '50' }
               ]),
               content: '<img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [50,50]/>',
               start: 175,
@@ -280,7 +278,7 @@ test.describe('Tokeniser tests', () => {
               type: 'a',
               isClosing: false,
               isSelfClosing: false,
-              attributes: new Set<StarshipAttribute>([ { type: 'path', name: 'href', value: '../link' }]),
+              attributes: new Set<StarshipAttribute>([ { name: 'href', value: '../link' }]),
               content: '<a {../link}>',
               start: 291,
               end: 304
@@ -299,7 +297,7 @@ test.describe('Tokeniser tests', () => {
               type: 'label',
               isClosing: false,
               isSelfClosing: false,
-              attributes: new Set<StarshipAttribute>([{ type: 'for', value: 'username'}]),
+              attributes: new Set<StarshipAttribute>([{ name: 'for', value: 'username'}]),
               content: '<label {username}>',
               start: 322,
               end: 340
@@ -319,9 +317,9 @@ test.describe('Tokeniser tests', () => {
               isClosing: false,
               isSelfClosing: false,
               attributes: new Set<StarshipAttribute>([
-                { type: 'type', value: 'text'},
-                { type: 'id', value: 'username'},
-                { type: 'placeholder', value: 'Placeholder text'}
+                { name: 'type', value: 'text'},
+                { name: 'id', value: 'username'},
+                { name: 'placeholder', value: 'Placeholder text'}
               ]),
               content: '<input {text} "#username" @"Placeholder text">',
               start: 362,

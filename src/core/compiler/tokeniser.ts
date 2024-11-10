@@ -56,7 +56,7 @@ function parseTag(input: string): {
     isClosing: boolean
 } {
     const { TAGS } = getGeneralPatterns()
-    let match
+    let match: string[]
 
     /** 
      *  Matching opening tags will make match[1] defined 
@@ -70,7 +70,6 @@ function parseTag(input: string): {
                 attributes = attributes.substring(0, attributes.length - 1)
             }
             const attributeSet = splitAttributes(tagName, attributes)
-            console.log(attributeSet)
     
             return {
                 tagType: tagName,
@@ -145,72 +144,65 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
         EVENT_NAME,
         ATTR_NAME
     } = getAttributePatterns(attribute)
-
-    console.log(tag, attribute)
     
     if (attribute.at(1) === "." && IN_QUOTES) {
         return [{
-            type: 'class',
+            name: 'className',
             value: INSIDE_CLASSID
         }]
     } 
     if (attribute.at(1) === "#" && IN_QUOTES) {
         return [{
-            type: 'id',
+            name: 'id',
             value: INSIDE_CLASSID
         }]
     } 
     if (IS_PLACEHOLDER) {
         return [{
-            type: 'placeholder',
+            name: 'placeholder',
             value: INSIDE_CLASSID
         }]
     }
     if ((tag === 'img' || tag === 'a') && IN_CURLY_BRACKETS) {
         return [{
-            type: 'path',
             name: tag === 'img' ? 'src' : 'href',
             value: INSIDE_BRACKETS
         }]
     } 
     if ((tag === 'button' || tag === 'input') && IN_CURLY_BRACKETS) {
         return [{
-            type: 'type',
+            name: 'type',
             value: INSIDE_BRACKETS
         }]
     } 
     if (tag === 'label' && IN_CURLY_BRACKETS) {
         return [{
-            type: 'for',
+            name: 'for',
             value: INSIDE_BRACKETS
         }]
     } 
     if (attribute.startsWith("on:")) {
         return [{
-            type: 'event',
-            name: EVENT_NAME,
+            name: `on:${EVENT_NAME}`,
             value: attribute.replace(`on:${EVENT_NAME}=`, '')
         }]
     }
     if (tag === 'img' && IN_QUOTES) {
         return [{
-            type: 'alt',
+            name: 'alt',
             value: INSIDE_BRACKETS
         }]
     }
-    console.log(IN_SQUARE_BRACKETS)
     if (tag === 'img' && IN_SQUARE_BRACKETS) {
         const dimensions = INSIDE_BRACKETS.split(',').map(dim => dim.trim())
         if (dimensions.length === 2) {
             const [width, height] = dimensions
             return [
                 {
-                    type: 'attribute',
                     name: 'width',
                     value: width
                 },
                 {
-                    type: 'attribute',
                     name: 'height',
                     value: height
                 }
@@ -218,7 +210,6 @@ function createStarshipAttribute(tag: string, attribute: string): StarshipAttrib
         }
     }
     return [{
-        type: 'attribute',
         name: ATTR_NAME,
         value: attribute
     }]
