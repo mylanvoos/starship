@@ -1,6 +1,6 @@
+import { capitaliseFirstLetter } from '@core/utils'
 import { StarshipAttribute, StarshipToken } from './types'
 import { 
-    capitaliseFirstLetter, 
     getAttributePatterns, 
     getExpression, 
     getGeneralPatterns, 

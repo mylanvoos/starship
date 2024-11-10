@@ -10,6 +10,11 @@ export function lookAheadFor(source: string, pos: number, stopAt: string): boole
     return false
 }
 
+
+export function capitaliseFirstLetter(str: string) {
+    return str.at(0).toUpperCase() + str.substring(1)
+}
+
 export function extractBetween(source: string, ...delimiters: string[]): string | null {
     if (delimiters.length < 2) {
         throw new Error('At least two delimiters are required')

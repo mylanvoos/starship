@@ -1,26 +1,34 @@
 <div ".container">
   <h1 "#text">Starship 🛰️</h1>
   <p "#text">The classic button experiment to test reactivity...</p>
-  <button on:click={() => setCounter(counter.value - 1)}> -1 </button>
+  <button on:click={() => setCounter(counter - 1)}> -1 </button>
       { counter }
-  <button on:click={() => setCounter(counter.value + 1)}> +1 </button>
+  <button on:click={() => setCounter(Number(counter) + 1)}> +1 </button>
+</div>
+<div ".container2">
   <p "#text">{ message }</p>
-  <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
+  <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [450,250] />
   <a {../link}>Link here</a>
 </div>
 
 <script>
-const [counter, setCounter, attachToCounter] = createSignal<number>(0)
-const [message, setMessage] = createSignal<string>("")
-const [voyagerThreshold, setVoyagerThreshold, attachToThreshold] = createSignal<number>(5)
+const { counter, message, voyagerThreshold } = createSignals<{
+  counter: number,
+  message: string,
+  voyagerThreshold: number
+}>({
+  counter: 0,
+  message: "",
+  voyagerThreshold: 5
+})
 
-attachToCounter(() => setMessage(counter.value, [
+attachToCounter(() => setMessage(counter, [
   [ when(v => v > 10 || v < -10), effect(() => {
     setCounter(0)
     return "Cannot exceed +=10!"
   }) ],
   [ when(v => v === 0), effect("Press a button to get started.")],
-  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
+  [ when(v => [1, 2, 3, 4].includes(Number(v))), effect(`${counter} is between [1, 4] (you can do range-based pattern matching!)`)],
   [ _, effect(`Keep pressing...`) ]
 ]))
 
@@ -29,8 +37,6 @@ attachToCounter(() => setMessage(counter.value, [
 <style>
 body {
   font-family: "Lucida Console";
-  width: 500px;
-  margin: auto;
 }
 button {
   margin: 0 20px;

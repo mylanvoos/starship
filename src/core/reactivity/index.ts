@@ -1,1 +1,1 @@
-export { createSignal } from './store'
+export { createSignal, createSignals } from './store'

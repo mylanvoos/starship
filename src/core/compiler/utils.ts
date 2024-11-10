@@ -43,10 +43,6 @@ export function getGeneralPatterns() {
     }
 }
 
-export function capitaliseFirstLetter(str: string) {
-    return str.at(0).toUpperCase() + str.substring(1)
-}
-
 export function getExpression(input: string, header: string) { 
     const str = input.replace(header, '')
     return str.substring(1, str.length - 1)

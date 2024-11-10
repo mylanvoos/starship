@@ -28,7 +28,7 @@ export function starshipPlugin() {
   
           const code = `
           import {  effect, match, when, _ } from "@core/framework"
-          import { createSignal } from "@core/reactivity"
+          import { createSignals, createSignal } from "@core/reactivity"
           import { Show, h, Fragment } from "@core/dom"
   
           ${scriptContent}
