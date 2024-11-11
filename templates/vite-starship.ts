@@ -33,14 +33,14 @@ import { createSignals, createSignal } from "../starship/core/reactivity"
 import { Show, h, Fragment } from "../starship/core/compiler"
 
 ${scriptContent}
+${styleInjectionCode}
 
 export default class Component {
   render(): HTMLElement {
-    ${styleInjectionCode}
     return (
-      <main>
+      <>
         ${templateContent}
-      </main>
+      </>
     );
   }
 }
