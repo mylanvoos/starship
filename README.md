@@ -2,9 +2,6 @@
 
 ![](https://raw.githubusercontent.com/mylanvoos/starship/refs/heads/main/public/starship.png)
 
-<details>
-  <summary>Show Code</summary>
-
 ```jsx
 <div ".container">
   <h1 "#text">Starship 🛰️</h1>
@@ -19,7 +16,6 @@
   <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [450,250] />
   <a {../link}>This is a link</a>
 </div>
-
 ```
 ```typescript
 <script>
@@ -53,7 +49,6 @@ button {
 }
 </style>
 ```
-</details> 
 
 This is an experiment in creating a custom frontend framework in an attempt to better understand how modern frameworks like React, Vue, Svelte, and Angular work under the hood. Thus, Starship was born.
 
@@ -85,12 +80,12 @@ You can explicitly specify the names for the `setter` and the `attacher` methods
 The `createSignals` method allows you to set up multiple individual signals at the same time. When you call this method, Starship automatically generates both a `setter` (e.g., `setCounter`) and an `attacher` (e.g., `attachToCounter`) for each of your variables. They both obey a strict naming convention.
 
 - By default, a `var` variable created through `createSignals` will have `setVar` and `attachToVar` generated.
-- If you want to avoid creating unnecessary attachers, simply add a `@` symbol before the variable name.
+- If you want to avoid creating unnecessary attachers, simply add a `_` symbol before the variable name.
 
 ```typescript
 const { counter, message, voyagerThreshold } = createSignals({
-  counter: 0,
-  @message: "",
+  _counter: 0,
+  message: "",
   voyagerThreshold: 5
 })
 ```
@@ -100,7 +95,7 @@ const { counter, message, voyagerThreshold } = createSignals({
 Inspired by Rust, Starship enables pattern matching for control flows. This is powerful for handling different cases based on the signal value.
 
 ```typescript
-attachToCounter(() => setMessage(counter.value, 
+attachToCounter(() => setMessage(counter.value, [
   [ when(v => v >= 10 || v <= -10), effect(() => {
     setCounter(0)
     return "Cannot exceed +=10!"

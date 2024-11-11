@@ -55,27 +55,32 @@ class SignalStore {
         [K in keyof T]: SignalGuard<T[K]>
     } {
         const result: Partial<Record<keyof T, SignalGuard<any>>> = {}
-        for (const key in signalsObj) {
-            const [getter, setter, attacher] = createSignal(signalsObj[key])
-            result[key] = getter
-            
+        for (const signalKey in signalsObj) {
+            const [getter, setter, attacher] = createSignal(signalsObj[signalKey])
+
+            const hasAttacher = signalKey.includes("_")
+            const key = hasAttacher ? signalKey.slice(1) : signalKey
+            result[key as keyof T] = getter
+
             // Dynamicly-generated setter and attacher for each signal
             const setterName = `set${capitaliseFirstLetter(key)}`
             const attacherName = `attachTo${capitaliseFirstLetter(key)}`
 
+            if (hasAttacher) {
+                Object.defineProperty(globalThis, attacherName, {
+                    value: attacher,
+                    writable: true,
+                    configurable: true
+                })
+            }
             Object.defineProperty(globalThis, setterName, {
                 value: setter,
                 writable: true,
                 configurable: true
             })
-            Object.defineProperty(globalThis, attacherName, {
-                value: attacher,
-                writable: true,
-                configurable: true
-            })
         }
         return result as { [K in keyof T]: SignalGuard<T[K]> }
-}
+    }
 
     isSignal(object: any): boolean {
         return object instanceof SignalGuard

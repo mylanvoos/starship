@@ -21,13 +21,16 @@ export default defineConfig({
   assetsInclude: '**/*.uss',
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/core/index.ts'),
+      entry: {
+        'index': path.resolve(__dirname, 'src/core/index.ts'),
+        'vite-starship': path.resolve(__dirname, 'vite-starship.ts')
+      },
       name: 'StarshipJSX',
       formats: ['es', 'cjs'],
-      fileName: (format) => `index.${format === 'es' ? 'mjs' : 'js'}`
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'mjs' : 'js'}`
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'vite', 'esbuild', 'fs', 'path'],
       output: {
         globals: {
           react: 'React',

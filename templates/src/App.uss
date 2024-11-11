@@ -1,0 +1,32 @@
+<script>
+const { count, message } = createSignals({
+  count: 0,
+  message: "Hello Starship!"
+});
+
+const increment = () => {
+  setCount(count.value + 1);
+};
+</script>
+
+<style>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  margin: 1rem;
+  cursor: pointer;
+}
+</style>
+
+<div class="container">
+  <h1>{message}</h1>
+  <p>Count: {count}</p>
+  <button onClick={increment}>Increment</button>
+</div>

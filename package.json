@@ -1,6 +1,6 @@
 {
   "name": "starship-jsx",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "A novel JSX-based frontend framework",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -14,14 +14,15 @@
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./vite-plugin": {
-      "import": "./dist/vite-plugin.mjs",
-      "require": "./dist/vite-plugin.js"
+    "./plugin": {
+      "import": "./dist/vite-starship.mjs",
+      "require": "./dist/vite-starship.js",
+      "types": "./dist/vite-starship.d.ts"
     }
   },
   "files": [
     "dist",
-    "bin",
+    "src/cli",
     "templates",
     "README.md"
   ],
@@ -31,7 +32,8 @@
     "build": "npm run build:types && npm run build:lib",
     "build:types": "tsc",
     "build:lib": "vite build",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build && chmod +x src/cli/create-starship-app.js",
+    "postinstall": "chmod +x src/cli/create-starship-app.js",
     "start": "vite",
     "preview": "vite preview",
     "test": "npx playwright test",
@@ -58,7 +60,8 @@
   "dependencies": {
     "acorn": "^8.14.0",
     "acorn-jsx": "^5.3.2",
-    "entities": "^5.0.0"
+    "entities": "^5.0.0",
+    "prompts": "^2.4.2"
   },
   "peerDependencies": {
     "typescript": ">=4.x"

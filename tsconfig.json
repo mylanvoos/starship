@@ -27,6 +27,6 @@
   },
   "include": [
     "src", 
-    "src/core/framework/types/**/*", "vite-starship.ts", 
+    "src/core/framework/types/**/*", 
   ]
 }
