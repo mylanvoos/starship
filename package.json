@@ -1,14 +1,44 @@
 {
-  "name": "starshipjs",
-  "version": "1.0.0",
+  "name": "starship-jsx",
+  "version": "0.1.1",
+  "description": "A novel JSX-based frontend framework",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "start": "tsc && vite",
+    "build": "npm run build:types && npm run build:lib",
+    "build:types": "tsc",
+    "build:lib": "vite build",
+    "prepublishOnly": "npm run build",
+    "start": "vite",
     "preview": "vite preview",
     "test": "npx playwright test"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mylanvoos/starship.git"
+  },
+  "keywords": [
+    "JSX",
+    "reactivity",
+    "frontend",
+    "framework"
+  ],
+  "author": "Myan Vu",
+  "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.48.2",
     "@types/node": "^22.8.6",
@@ -18,7 +48,9 @@
   "dependencies": {
     "acorn": "^8.14.0",
     "acorn-jsx": "^5.3.2",
-    "entities": "^5.0.0",
-    "starshipjs": "file:"
+    "entities": "^5.0.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.x"
   }
 }

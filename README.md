@@ -74,7 +74,9 @@ You can create signals using either the `createSignal` or the `createSignals` me
 
 In Starship, `createSignal` creates a reactive signal with a `getter`, `setter`, and `attacher`. This setup allows for a streamlined reactivity system inspired by React's `useState` hook (in fact, this started as an attempt to 'clone' React!)
 
-`const [counter, setCounter, attach] = createSignal(0)`
+```typescript
+const [counter, setCounter, attach] = createSignal(0)
+```
 
 You can explicitly specify the names for the `setter` and the `attacher` methods using `createSignal`.
 

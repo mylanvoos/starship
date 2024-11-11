@@ -18,5 +18,24 @@ export default defineConfig({
     jsxFragment: 'Fragment',
     sourcemap: true, // debug
   },
-  assetsInclude: '**/*.uss'
+  assetsInclude: '**/*.uss',
+  build: {
+    lib: {
+      entry: path.resolve(__dirname, 'src/core/index.ts'),
+      name: 'StarshipJSX',
+      formats: ['es', 'cjs'],
+      fileName: (format) => `index.${format === 'es' ? 'mjs' : 'js'}`
+    },
+    rollupOptions: {
+      external: ['react', 'react-dom'],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM'
+        }
+      }
+    },
+    sourcemap: true,
+    minify: 'esbuild'
+  }
 })
