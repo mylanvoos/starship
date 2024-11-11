@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
-import { starshipPlugin } from '../vite-starship';
-
+import { starshipPlugin } from './vite-starship'
+import path from 'path';
 
 export default defineConfig({
   plugins: [starshipPlugin()],
@@ -17,4 +17,12 @@ export default defineConfig({
       external: ['react', 'react-dom'],
     },
   },
+  resolve: {
+    alias: {
+      '@core': path.resolve(__dirname, 'core'),
+      '@framework': path.resolve(__dirname, 'core/framework'),
+      '@reactivity': path.resolve(__dirname, 'core/reactivity'),
+      '@dom': path.resolve(__dirname, 'core/dom')
+    }
+  }
 })

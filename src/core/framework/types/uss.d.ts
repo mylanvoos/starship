@@ -3,3 +3,5 @@ declare module '*.uss' {
     const component: typeof Component
     export default component
 }
+
+export { }

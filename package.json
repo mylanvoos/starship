@@ -11,15 +11,26 @@
   },
   "files": [
     "dist",
-    "src",
     "templates",
     "README.md"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./core/*": {
+      "import": "./dist/core/*/index.js",
+      "require": "./dist/core/*/index.js",
+      "types": "./dist/core/*/index.d.ts"
+    }
+  },
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
     "build": "npm run build:types && npm run build:lib && npm run build:cli",
-    "build:types": "tsc",
+    "build:types": "tsc --project tsconfig.json",
     "build:lib": "vite build",
     "build:cli": "node esbuild.cli.js",
     "prepublishOnly": "npm run build && chmod +x dist/cli/create-starship-app.js",

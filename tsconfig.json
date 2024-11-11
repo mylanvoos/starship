@@ -1,18 +1,30 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "sourceMap": true,
     "moduleResolution": "node",
+    "target": "ES6",
+    "module": "ESNext",
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "jsx": "react",
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
+    // "strict": true,
+    "preserveConstEnums": true
   },
   "include": [
-    "src"
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

@@ -1,6 +1,8 @@
 export { createSignals, createSignal } from './core/reactivity'
 export { Show, h, Fragment } from './core/dom'
 export { match } from './core/framework'
+export * from './core'
+// @ts-ignore
 import App from './App.uss'
 import { ASTNode } from './core/compiler/types'
 

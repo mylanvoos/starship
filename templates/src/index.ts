@@ -1,16 +1,21 @@
 // This is the main entry point of your application.
 
+export { createSignals, createSignal } from '../core/reactivity'
+export { Show, h, Fragment } from '../core/dom'
+export { match } from '../core/framework'
+
 // @ts-ignore
-export { createSignals, createSignal } from './core/reactivity'
-export { Show, h, Fragment } from './core/dom'
-export { match } from './core/framework'
 import App from './App.uss'
-import { ASTNode } from './core/compiler/types'
+import './index.css'
 
 const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined'
 
-// recursively flatten nested arrays (handling nested elements vs single elements)
-function flattenElements(elements: ASTNode[]) {
+/**
+ * Recursively flatten nested arrays (handling nested elements vs single elements)
+ * @param elements : ASTNode[]
+ * @returns ASTNode[]
+ */
+function flattenElements(elements) {
   const result = []
   for (const el of elements) {
     if (Array.isArray(el)) {
@@ -24,6 +29,7 @@ function flattenElements(elements: ASTNode[]) {
 
 if (isBrowser) {
   const appElement = App()
+  console.log(appElement)
   const flatElements = flattenElements(appElement)
 
   for (const node of flatElements) {
