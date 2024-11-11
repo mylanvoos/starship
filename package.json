@@ -1,19 +1,28 @@
 {
   "name": "starship-jsx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A novel JSX-based frontend framework",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "bin": {
+    "create-starship-app": "./src/cli/create-starship-app.js"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./vite-plugin": {
+      "import": "./dist/vite-plugin.mjs",
+      "require": "./dist/vite-plugin.js"
     }
   },
   "files": [
     "dist",
+    "bin",
+    "templates",
     "README.md"
   ],
   "sideEffects": false,
@@ -25,7 +34,8 @@
     "prepublishOnly": "npm run build",
     "start": "vite",
     "preview": "vite preview",
-    "test": "npx playwright test"
+    "test": "npx playwright test",
+    "create-starship-app": "node ./src/cli/create-starship-app.js"
   },
   "repository": {
     "type": "git",
@@ -37,7 +47,7 @@
     "frontend",
     "framework"
   ],
-  "author": "Myan Vu",
+  "author": "Myan V.",
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.48.2",
