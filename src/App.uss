@@ -11,8 +11,11 @@
   <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [450,250] />
   <a {../link}>This is a link</a>
 </div>
+<Child />
 
 <script>
+import Child from './Child.uss'
+
 const { counter, message, voyagerThreshold } = createSignals({
   _counter: 0,
   message: "",

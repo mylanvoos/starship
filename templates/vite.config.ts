@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import { starshipPlugin } from 'starship-jsx/vite-starship';
+import { starshipPlugin } from '../vite-starship';
 
 export default defineConfig({
   plugins: [starshipPlugin()],

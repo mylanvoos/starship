@@ -20,7 +20,7 @@
 ```typescript
 <script>
 const { counter, message, voyagerThreshold } = createSignals({
-  @counter: 0,
+  _counter: 0,
   message: "",
   voyagerThreshold: 5
 })

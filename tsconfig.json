@@ -1,32 +1,18 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "@core/*": ["src/core/*"],
-      "@core/dom": ["src/core/dom/*"],
-      "@core/framework": ["src/core/framework/*"],
-      "@core/reactivity": ["src/core/reactivity/*"],
-      "@core/compiler": ["src/core/compiler/*"]
-    },
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
     "jsx": "react",
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",
-    
-    "esModuleInterop": true,  
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/core/framework/types",
-    ]
+    "outDir": "./dist"
   },
   "include": [
-    "src", 
-    "src/core/framework/types/**/*", 
+    "src"
   ]
 }

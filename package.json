@@ -1,43 +1,33 @@
 {
   "name": "starship-jsx",
-  "version": "0.1.4",
+  "version": "0.1.8",
   "description": "A novel JSX-based frontend framework",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "create-starship-app": "./src/cli/create-starship-app.js"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./plugin": {
-      "import": "./dist/vite-starship.mjs",
-      "require": "./dist/vite-starship.js",
-      "types": "./dist/vite-starship.d.ts"
-    }
+    "create-starship-app": "./dist/cli/create-starship-app.js"
   },
   "files": [
     "dist",
-    "src/cli",
+    "src",
     "templates",
     "README.md"
   ],
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:types && npm run build:lib",
+    "build": "npm run build:types && npm run build:lib && npm run build:cli",
     "build:types": "tsc",
     "build:lib": "vite build",
-    "prepublishOnly": "npm run build && chmod +x src/cli/create-starship-app.js",
-    "postinstall": "chmod +x src/cli/create-starship-app.js",
+    "build:cli": "node esbuild.cli.js",
+    "prepublishOnly": "npm run build && chmod +x dist/cli/create-starship-app.js",
+    "postinstall": "chmod +x dist/cli/create-starship-app.js",
     "start": "vite",
     "preview": "vite preview",
     "test": "npx playwright test",
-    "create-starship-app": "node ./src/cli/create-starship-app.js"
+    "create-starship-app": "node ./dist/cli/create-starship-app.js"
   },
   "repository": {
     "type": "git",
@@ -54,8 +44,13 @@
   "devDependencies": {
     "@playwright/test": "^1.48.2",
     "@types/node": "^22.8.6",
+    "esbuild": "^0.17.11",
     "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "vite": "^5.4.10",
+    "eslint": "^8.0.0",
+    "prettier": "^2.0.0",
+    "eslint-config-prettier": "^8.0.0",
+    "eslint-plugin-prettier": "^4.0.0"
   },
   "dependencies": {
     "acorn": "^8.14.0",
