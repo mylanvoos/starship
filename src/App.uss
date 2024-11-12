@@ -12,6 +12,9 @@
   <a {../link}>This is a link</a>
 </div>
 <Child />
+<Show when={counter === voyagerThreshold}>
+    Hi
+</Show>
 
 <script>
 import Child from './Child.uss'

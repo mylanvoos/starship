@@ -1,10 +1,10 @@
 import { capitaliseFirstLetter } from '../utils'
 import { StarshipAttribute, StarshipToken } from './types'
-import { 
-    getAttributePatterns, 
-    getExpression, 
-    getGeneralPatterns, 
-    splitAttributes 
+import {
+    getAttributePatterns,
+    getExpression,
+    getGeneralPatterns,
+    splitAttributes
 } from './utils'
 
 export class StarshipTokeniser {
@@ -24,22 +24,21 @@ export class StarshipTokeniser {
     tokenise() {
         const { TEXT_TAGS } = getGeneralPatterns()
         let match
-    
+
         /** 
          *  Matching tags will make match[1] defined 
          *  Matching text will make match[3] defined
          */
         while ((match = TEXT_TAGS.exec(this.source)) !== null) {
-    
             if (match[1]) {
                 const tagContent = match[0]
-    
+
                 const start = match.index
                 const end = TEXT_TAGS.lastIndex
                 const isSelfClosing = tagContent.includes("/>")
-    
-                const { tagType, isClosing, attributes }= this.processTag(tagContent)
-    
+
+                const { tagType, isClosing, attributes } = this.processTag(tagContent)
+
                 this.tokens.push({
                     type: tagType,
                     isClosing: isClosing,
@@ -50,11 +49,11 @@ export class StarshipTokeniser {
                     end: end
                 })
             } else if (match[3]) {
-    
+
                 const textContent = match[3]
                 const start = match.index
                 const end = TEXT_TAGS.lastIndex
-    
+
                 if (textContent.trim() !== '') {
                     this.tokens.push({
                         type: 'text',
@@ -74,7 +73,7 @@ export class StarshipTokeniser {
     } {
         const { TAGS } = getGeneralPatterns()
         let match: string[]
-    
+
         /** 
          *  Matching opening tags will make match[1] defined 
          *  Matching closing text will make match[3] defined
@@ -89,7 +88,6 @@ export class StarshipTokeniser {
                 const attributeSet = splitAttributes(attributes) ? new Set<StarshipAttribute>(
                     splitAttributes(attributes)
                         .flatMap(attr => this.processAttribute(tagName, attr))) : null
-
                 return {
                     tagType: tagName,
                     isClosing: false,
@@ -107,19 +105,19 @@ export class StarshipTokeniser {
     }
 
     processAttribute(tag: string, attribute: string): StarshipAttribute[] {
-        const { 
+        const {
             IS_PLACEHOLDER,
-            IN_QUOTES, 
-            IN_CURLY_BRACKETS, 
-            INSIDE_BRACKETS, 
-            IN_SQUARE_BRACKETS, 
-            INSIDE_CLASSID, 
+            IN_QUOTES,
+            IN_CURLY_BRACKETS,
+            INSIDE_BRACKETS,
+            IN_SQUARE_BRACKETS,
+            INSIDE_CLASSID,
             EVENT_NAME,
             ATTR_NAME
         } = getAttributePatterns(attribute)
 
         const attributeNameValue = (name: string, value: string): StarshipAttribute => ({ name, value })
-        
+
         const handlers = {
             ".": () => attributeNameValue('className', INSIDE_CLASSID),
             "#": () => attributeNameValue('id', INSIDE_CLASSID),
@@ -131,13 +129,13 @@ export class StarshipTokeniser {
             "alt": () => attributeNameValue('alt', INSIDE_BRACKETS),
             "imgSize": () => {
                 const [width, height] = INSIDE_BRACKETS.split(',').map(dim => dim.trim());
-                return [ attributeNameValue('width', width), attributeNameValue('height', height) ];
+                return [attributeNameValue('width', width), attributeNameValue('height', height)];
             },
             "default": () => attributeNameValue(ATTR_NAME, getExpression(attribute, `${ATTR_NAME}=`))
 
             // TODO: Add more shortcuts
         }
-    
+
         if (attribute.startsWith("on:")) return [handlers["event"]()];
         if (IS_PLACEHOLDER) return [handlers["placeholder"]()];
         if (tag === 'img' && IN_SQUARE_BRACKETS) return handlers["imgSize"]();
@@ -145,12 +143,12 @@ export class StarshipTokeniser {
         if (IN_CURLY_BRACKETS && (tag === 'img' || tag === 'a')) return [handlers["srcOrHref"]()];
         if (IN_CURLY_BRACKETS && (tag === 'button' || tag === 'input')) return [handlers["type"]()];
         if (IN_CURLY_BRACKETS && tag === 'label') return [handlers["for"]()]
-    
+
         // Symbol-based attributes for classes or IDs
         // attribute[1] === "." and attribute[1] === "#"
         const symbolHandler = handlers[attribute[1]]
         if (symbolHandler && IN_QUOTES) return [symbolHandler()]
-    
+
         return [handlers["default"]()]
     }
 }

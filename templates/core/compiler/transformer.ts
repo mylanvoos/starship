@@ -7,15 +7,18 @@ export class StarshipTransformer {
     private ast: ASTNode[]
     private jsx: string
     private depth: number
-    
+    private starshipTags: string[]
+
     constructor(ast: ASTNode[]) {
         this.ast = ast
         this.jsx = ""
         this.depth = 0
+        this.starshipTags = ['Show', 'For'] // tags specific to Starship
     }
 
     toJSX(): string {
         this.jsx = this.transformNodes(this.ast)
+        console.log(this.jsx)
         return this.jsx
     }
 
@@ -36,19 +39,53 @@ export class StarshipTransformer {
         }
 
         if (node.type === 'Element' && node.tagName) {
-            const openingTag = `${"    ".repeat(this.depth)}<${node.tagName}${this.transformAttributes(node.attributes)}>`
-            const closingTag = `</${node.tagName}>`
-            
-            this.depth++
-            const childrenContent = this.transformNodes(node.children);
-            this.depth--
-
-            return `${openingTag}\n${childrenContent}${"    ".repeat(this.depth)}${closingTag}\n`
+            if (this.starshipTags.includes(node.tagName)) {
+                return this.transformStarshipElements(node)
+            }
+            return this.transformJSXElements(node)
         }
         return ''
     }
 
-    transformAttributes(attributes: StarshipAttribute[]): string {
+    transformStarshipElements(node: ASTNode): string {
+        const openingTag = `${"    ".repeat(this.depth)}<${node.tagName} ${this.transformStarshipAttributes(node.tagName, node.attributes)}>`
+        const closingTag = `</${node.tagName}>`
+
+        this.depth++
+        const childrenContent = this.transformNodes(node.children);
+        this.depth--
+
+        return `${openingTag}\n${childrenContent}${"    ".repeat(this.depth)}${closingTag}\n`
+    }
+
+    transformStarshipAttributes(tagName: string, attributes: StarshipAttribute[]): string {
+        if (attributes.length !== 1) {
+            throw new Error('Special Starship tags must have exactly one attribute!')
+        }
+        // Enforce operator 1 === operator 2
+        if (tagName === 'Show') {
+            const split = attributes[0].value.split(" ")
+            const operator1 = split[0]
+            const operand = split[1]
+            if (operand !== '==' && operand !== '===') throw new Error('Invalid operand for <Show>!')
+            const operator2 = split[2]
+            return `when={() => ${operator1}.value ${operand} ${operator2}.value}`
+        }
+        return ""
+    }
+
+    transformJSXElements(node: ASTNode): string {
+        const openingTag = `${"    ".repeat(this.depth)}<${node.tagName}${this.transformJSXAttributes(node.attributes)}>`
+        const closingTag = `</${node.tagName}>`
+
+        this.depth++
+        const childrenContent = this.transformNodes(node.children);
+        this.depth--
+
+        return `${openingTag}\n${childrenContent}${"    ".repeat(this.depth)}${closingTag}\n`
+    }
+
+    transformJSXAttributes(attributes: StarshipAttribute[]): string {
         let strArray: string[] = []
 
         for (const attr of attributes) {
@@ -65,7 +102,7 @@ export class StarshipTransformer {
             } else if (SETTER_BOOL) {
                 const variableName = decapitaliseFirstLetter(SETTER_BOOL[1])
                 attr.value = `() => set${capitaliseFirstLetter(variableName)}(!${variableName}.value)`
-            } 
+            }
             strArray.push(attr.name.includes("on") ? ` ${attr.name}={${attr.value}}` : ` ${attr.name}="${attr.value}"`)
         }
         return strArray.join('')
