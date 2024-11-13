@@ -31,4 +31,9 @@ export interface ParserOptions extends Options {
     tokeniser: StarshipTokeniser
 }
 
+export interface ForAttributesMode {
+    display: string
+    isRange: boolean,
+    item: string
+}
 export { }

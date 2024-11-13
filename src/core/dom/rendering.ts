@@ -168,7 +168,7 @@ export function Show(props: { when: (() => boolean) | SignalGuard<boolean>; chil
     )}
  * </For>
  */
-export function For<T>(props: {
+export function For(props: {
   each: any[]
   range?: boolean; // if <For {item}:in:{array}> or <For {index}:range:{array.length}>
   children: (itemOrIndex: any, index: number) => any

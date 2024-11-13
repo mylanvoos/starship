@@ -15,7 +15,7 @@
 <Show when={counter === voyagerThreshold}>
     Hi
 </Show>
-<For {signal}:range:{signal3}>
+<For {index}:range:{signal3}>
     indices
 </For>
 <For {signal}:in:{signal3}>

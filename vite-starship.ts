@@ -27,7 +27,7 @@ export function starshipPlugin() {
           : ''
 
         const code = `
-import { h, Show, Fragment } from "./core/dom"
+import { h, Show, Fragment, For } from "./core/dom"
 import { createSignals, createSignal } from "./core/reactivity"
 import { effect, match, when, _ } from "./core/framework"
 
