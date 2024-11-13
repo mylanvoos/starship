@@ -18,7 +18,6 @@ export class StarshipTransformer {
 
     toJSX(): string {
         this.jsx = this.transformNodes(this.ast)
-        console.log(this.jsx)
         return this.jsx
     }
 
@@ -106,9 +105,9 @@ export class StarshipTransformer {
     transformStarshipChildren(node: ASTNode, isRange: boolean, item: string) {
         let str: string = ''
         if (isRange) {
-            str += `${"    ".repeat(this.depth)}{(${item}) => ( ${this.transformNodes(node.children)}${"    ".repeat(this.depth)})}\n`
+            str += `${"    ".repeat(this.depth)}{(${item}) => (<>${this.transformNodes(node.children)}${"    ".repeat(this.depth)}</>)}\n`
         } else {
-            str += `${"    ".repeat(this.depth)}{(${item}, index) => ( ${this.transformNodes(node.children)}${"    ".repeat(this.depth)})}\n`
+            str += `${"    ".repeat(this.depth)}{(${item}, index) => (<>${this.transformNodes(node.children)}${"    ".repeat(this.depth)}</>)}\n`
         }
         return str
     }

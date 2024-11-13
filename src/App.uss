@@ -16,10 +16,10 @@
     Hi
 </Show>
 <For {index}:range:{signal3}>
-    indices
+    <p>{index}</p>
 </For>
 <For {signal}:in:{signal3}>
-    elements
+    <p>{signal.name}</p>
 </For>
 
 <script>
@@ -37,13 +37,15 @@ const { counter, message, voyagerThreshold, signal3 } = createSignals({
     {
       id: "hello",
       name: "Hi world"
+    },
+    {
+      id: "another",
+      name: "meow"
     }
   ]
 })
 
 const arr = Array.from({ length: signal3.value.length }, (_, index) => index)
-
-console.log(arr)
 
 attachToCounter(() => setMessage(counter, [
   [ when(v => v > 10 || v < -10), effect(() => {
