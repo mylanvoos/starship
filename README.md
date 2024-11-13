@@ -1,133 +1,114 @@
-## Starship - An experimental JSX-based frontend framework ###
+# Starship 🛰️
+## A Signal-based JSX Compiler Framework
 
 ![](https://raw.githubusercontent.com/mylanvoos/starship/refs/heads/main/public/starship.png)
 
-```jsx
-<div ".container">
-  <h1 "#text">Starship 🛰️</h1>
-  <p "#text">The classic button experiment to test reactivity...</p>
-  <button on:click={setCounter(-1)}> -1 </button>
-      { counter }
-  <button on:click={setCounter(+1)}> +1 </button>
-  <button on:click={setVoyagerThreshold(counter)}> Set Voyager activation code </button>
-  <p "#text">{ message }</p>
-</div>
-<Show when={counter === voyagerThreshold}>
-  <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [450,250] />
-</Show>
-```
+Starship is an **experimental** compiler framework designed to explore modern frontend framework architectures and patterns. Unlike traditional frameworks that compile to vanilla JavaScript, Starship transforms its custom .uss files into JSX, leveraging React's runtime while providing its own reactive paradigms and ergonomic syntax.
+
+Contributions and discussions are welcome!
+
+## Core Features
+### 📡 Signal-based Reactivity
+
+Starship implements a sophisticated reactivity system using Signals, protected by SignalGuards and managed through a global SignalStore
+
 ```typescript
-<script>
+// Individual signal creation
+const [counter, setCounter, attach] = createSignal(0)
+
+// Batch signal creation with automatic setter/attacher generation
 const { counter, message, voyagerThreshold } = createSignals({
-  _counter: 0,
+  _counter: 0,  // '_' prefix to skip attacher generation
   message: "",
   voyagerThreshold: 5
 })
-
-attachToCounter(() => setMessage(counter,
-  [ when(v => v > 10 || v < -10), effect(() => {
-    setCounter(0)
-    return "Cannot exceed +=10!"
-  }) ],
-  [ when(v => v === 0), effect("Press a button to get started.")],
-  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter} is between [1, 4] (you can do range-based pattern matching!)`)],
-  [ _, effect(`Keep pressing...`) ]
-))
-</script>
 ```
-```css
+### Pattern Matching
+
+Inspired by Rust, Starship introduces functional pattern matching for elegant state management:
+
+```typescript
+attachToCounter(() => setMessage(counter, [
+  [ when(v => v > 10), effect("Value too high!") ],
+  [ when(v => v === 0), effect("Starting point") ],
+  [ _, effect("Default case") ]
+]))
+```
+### Ergonomic Template Syntax
+Starship organises components using a familiar three-section, single-file component structure similar to Vue (although you do not need to declare the `<template>` section!)
+
+```jsx
+{/* The minimal Starship app */}
+<div ".container">
+  <button on:click={setCounter(-1)}> -1 </button>
+    { counter }
+  <button on:click={setCounter(+1)}> +1 </button>
+</div>
+
+<script>
+const { counter } = createSignals({ counter: 0 })
+</script>
+
 <style>
-body {
-  font-family: "Lucida Console";
-}
-button {
-  margin: 0 20px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-}
+.container { /* ... */ }
 </style>
 ```
 
-This is an experiment in creating a custom frontend framework in an attempt to better understand how modern frameworks like React, Vue, Svelte, and Angular work under the hood. Thus, Starship was born.
+It also provides built-in shorthand syntax for common operations:
 
-Starship is an experimental framework that implements its own reactive state management, templating syntax, compiler, and JSX-based DOM manipulation. Unlike other frameworks, it does not compile to plain JavaScript but rather converts Starship.uss files into JSX, allowing React to handle the final transformation into JavaScript. Starship places heavy emphasis on *variable naming* and prioritises *conciseness* along with *development speed*. 
+- **Class Shorthand**: `<div ".className">` → `<div className="className">`
+- **Id Shorthand**: `<p "#id">` → `<p id="id">`
+- **Link Shorthand**: `<a {../path}>` → `<a href="../path">`
+- **Image Shorthand**: `<img {../path} "alt" [50,50] />` → `<img src="../path" alt="alt" width="50" height="50" />
+- **Input Shorthand**: `<input {email} @"Placeholder text">` → `<input type="email" placeholder="Placeholder text">`
 
-### Reactivity
-
-#### How It Works:
-
-- Reactivity in Starship is controlled by `Signals` and their attached listener functions, allowing you to set up reactions to signal changes.
-- Starship uses a global `SignalStore`, tracking application state for each signal.
-- Each signal has an associated `Sentry` for managing listeners, functions that run whenever the signal's value changes.
-- `SignalGuard` protects signal values, allowing changes only through the generated setter function.
-
-You can create signals using either the `createSignal` or the `createSignals` methods.
-
-#### Using the `createSignal` method
-
-In Starship, `createSignal` creates a reactive signal with a `getter`, `setter`, and `attacher`. This setup allows for a streamlined reactivity system inspired by React's `useState` hook (in fact, this started as an attempt to 'clone' React!)
-
-```typescript
-const [counter, setCounter, attach] = createSignal(0)
-```
-
-You can explicitly specify the names for the `setter` and the `attacher` methods using `createSignal`.
-
-#### Using the `createSignals` method
-
-The `createSignals` method allows you to set up multiple individual signals at the same time. When you call this method, Starship automatically generates both a `setter` (e.g., `setCounter`) and an `attacher` (e.g., `attachToCounter`) for each of your variables. They both obey a strict naming convention.
-
-- By default, a `var` variable created through `createSignals` will have `setVar` and `attachToVar` generated.
-- If you want to avoid creating unnecessary attachers, simply add a `_` symbol before the variable name.
-
-```typescript
-const { counter, message, voyagerThreshold } = createSignals({
-  _counter: 0,
-  message: "",
-  voyagerThreshold: 5
-})
-```
-
-### Using Pattern Matching for Functional Control
-
-Inspired by Rust, Starship enables pattern matching for control flows. This is powerful for handling different cases based on the signal value.
-
-```typescript
-attachToCounter(() => setMessage(counter.value, [
-  [ when(v => v >= 10 || v <= -10), effect(() => {
-    setCounter(0)
-    return "Cannot exceed +=10!"
-  }) ],
-  [ when(v => v === 0), effect("Press a button to get started.")],
-  [ when(v => [1, 2, 3, 4].includes(v)), effect(`${counter.value} is between [1, 4] (you can do range-based pattern matching!)`)],
-  [ _, effect(`Keep pressing...`) ]
-]))
-```
-
-### Conditional rendering with `<Show when={...}>`
-The <Show> element in Starship lets you render elements based on conditions in a simple, readable way. It renders the content inside <Show> only when the when condition is met. Currently, the compiler enforces the rule that the expression inside `when` must be an equality comparison between two signals.
+### Declarative Control Flow
 
 ```jsx
-<Show when={voyagerThreshold === counter}>
-  <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
+{/* Conditional Rendering */}
+<Show when={counter === threshold}>
+  <p>Threshold reached!</p>
 </Show>
-```
-"Show the Voyager record image when the `voyager` evaluates to true!"
 
-### Looping with `<For {...}>`
-You can loop over a signal containing an array with the <For> element. 
+{/* Array Iteration */}
+<For {items}:in:{array}>
+  {item.name}
+</For>
 
-```jsx
-<For {signal}:in:{signals}>
-  {signal.name}
+{/* Range-based Iteration */}
+<For {index}:range:{array}>
+  Item #{index}
 </For>
 ```
 
-You can also loop over the indices of said array. The Starship compiler will interpret this as the length of the array instead of the array itself. To loop over the elements of a numeric array, use `<For {...}:in:{...}>` instead.
+### Technical Architecture
 
-```jsx
-<For {index}:range:{signals}>
-  {index}
-</For>
-```
+Starship operates as a multi-stage compiler framework:
+
+1. Template Compilation Layer
+- **Tokenise**: `.uss` files are processed into template tokens
+- **Parse**: Template tokens are parsed into an AST
+- **Transform**: Elements, along with attribute shortcuts and control flow components, are converted to JSX
+
+2. Reactivity Layer
+- **Create**: Signals are created through `createSignal(s)` methods
+- **Guard**: SignalGuards are returned as getters, preventing state mutations
+- **Generate**: Automatic setter (`setVar`) and attacher (`attachToVar`) methods are generated
+
+3. Runtime Layer
+- **JSX**: JSX transformation (via React's `h` and `Fragment`)
+- **Integrate**: Integration with Vite's build pipeline
+- **Render**: Rendering of components, DOM manipulation, and event handling
+
+
+### Development Status
+Starship is currently under development. It's not recommended for production use. Current focus areas are:
+
+  - CLI tool
+  - Minimal template
+  - Browser-based editor
+  - Testing suite
+  - Documentation
+
+### License
+MIT
