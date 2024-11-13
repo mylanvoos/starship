@@ -39,8 +39,6 @@ export class StarshipTokeniser {
 
                 const { tagType, isClosing, attributes } = this.processTag(tagContent)
 
-                console.log("AT TOKEN:", tagType, attributes)
-
                 this.tokens.push({
                     type: tagType,
                     isClosing: isClosing,

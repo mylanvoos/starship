@@ -29,7 +29,12 @@ export function starshipPlugin() {
         const code = `
 import { h, Show, Fragment, For } from "@dom"
 import { createSignals, createSignal } from "@reactivity"
-import { effect, match, when, _ } from "@framework"
+import { 
+  effect, match, when, _, range,
+  some, Some, None, ok, none, err, guard,
+  Option, Result, Ok, Err, Pattern,
+  unwrap, unwrapOr
+} from "@framework"
 
 ${scriptContent}
 
@@ -44,7 +49,6 @@ export default function Component() {
 }
         `
 
-        console.log(code)
         const result = await esbuildTransform(code, {
           loader: 'tsx',
           sourcemap: true,
