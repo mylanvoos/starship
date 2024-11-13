@@ -3,7 +3,7 @@
 
 ![](https://raw.githubusercontent.com/mylanvoos/starship/refs/heads/main/public/starship.png)
 
-Starship is an **experimental** compiler framework designed to explore modern frontend framework architectures and patterns. Unlike traditional frameworks that compile to vanilla JavaScript, Starship transforms its custom .uss files into JSX, leveraging React's runtime while providing its own reactive paradigms and ergonomic syntax.
+Starship is an **experimental** compiler framework designed to explore modern frontend framework architectures and patterns. Unlike traditional frameworks that compile to vanilla JavaScript, Starship transforms its custom `.uss` files into JSX, leveraging React's runtime while providing its own reactive paradigms and ergonomic syntax.
 
 Contributions and discussions are welcome!
 
@@ -59,7 +59,7 @@ It also provides built-in shorthand syntax for common operations:
 - **Class Shorthand**: `<div ".className">` → `<div className="className">`
 - **Id Shorthand**: `<p "#id">` → `<p id="id">`
 - **Link Shorthand**: `<a {../path}>` → `<a href="../path">`
-- **Image Shorthand**: `<img {../path} "alt" [50,50] />` → `<img src="../path" alt="alt" width="50" height="50" />
+- **Image Shorthand**: `<img {../path} "alt" [50,50] />` → `<img src="../path" alt="alt" width="50" height="50" />`
 - **Input Shorthand**: `<input {email} @"Placeholder text">` → `<input type="email" placeholder="Placeholder text">`
 
 ### Declarative Control Flow
