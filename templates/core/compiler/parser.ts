@@ -44,7 +44,7 @@ export class StarshipParser extends Parser {
         tagName: null,
         attributes: [],
         children: [],
-      }
+      } as ASTNode
     } else if (token.isClosing) {
       this.currentTokenIndex++
       return null
@@ -59,7 +59,7 @@ export class StarshipParser extends Parser {
         attributes: attributes,
         children: [],
         content: token.content
-      }
+      } as ASTNode
     } else {
       const tagName: string = token.type
       const attributes: StarshipAttribute[] = Array.from(token.attributes ? token.attributes : [])
@@ -82,9 +82,8 @@ export class StarshipParser extends Parser {
         attributes: attributes,
         children: children,
         content: token.content
-      }
+      } as ASTNode
     }
-
   }
 
   isClosingTagFor(token: StarshipToken): boolean {

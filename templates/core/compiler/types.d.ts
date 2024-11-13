@@ -2,7 +2,7 @@ import { Token, TokenType, Position, Options } from "acorn"
 import { StarshipTokeniser } from "./tokeniser"
 
 /** Technically a lot of these do not have to be mandatory, but it's to prevent bugs */
-export type ASTNode = {
+export interface ASTNode extends Node {
     type: 'Element' | 'Text' | 'Attribute'
     tagName: string
     attributes: StarshipAttribute[]
@@ -31,4 +31,9 @@ export interface ParserOptions extends Options {
     tokeniser: StarshipTokeniser
 }
 
+export interface ForAttributesMode {
+    display: string
+    isRange: boolean,
+    item: string
+}
 export { }

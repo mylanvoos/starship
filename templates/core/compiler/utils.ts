@@ -1,7 +1,7 @@
 const PATTERNS = {
     TEXT_TAGS: /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g, // Matches tags and text
     TAGS: /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|<\/(\w+)>/, // Matches opening and closing tags
-    
+
     QUOTES: /^(['"])(.*)\1$/,                // Matches text wrapped in single or double quotes
     CURLY_BRACKETS: /^{(.*)}$/,              // Matches text wrapped in curly braces (special shortcuts)
     SQUARE_BRACKETS: /^\[(.*)]$/,            // Matches text wrapped in square brackets
@@ -9,7 +9,8 @@ const PATTERNS = {
     EVENT_NAME: /on:([^=]+)=/,
     ATTR_NAME: /([^=]+)=/,
     SETTER_VAL: /set([A-Z][a-zA-Z0-9]*)\(([-+]|''|""|)(\d+|\w+|\([^()]*\))\)/, // Matches setter shortcuts
-    SETTER_BOOL: /set([A-Z][a-zA-Z0-9]*)\(!\)/
+    SETTER_BOOL: /set([A-Z][a-zA-Z0-9]*)\(!\)/,
+    FOR_LOOP: /^{([^}]+)}:(in|range):{([^}]+)}$/
 }
 
 export function getAttributePatterns(attribute: string) {
@@ -23,8 +24,14 @@ export function getAttributePatterns(attribute: string) {
 
     const EVENT_NAME = attribute.match(PATTERNS.EVENT_NAME) ? attribute.match(PATTERNS.EVENT_NAME)[1].trim() : null
     const ATTR_NAME = attribute.match(PATTERNS.ATTR_NAME) ? attribute.match(PATTERNS.ATTR_NAME)[1].trim() : null
-    const SETTER_VAL = attribute.match(PATTERNS.SETTER_VAL) 
-    const SETTER_BOOL = attribute.match(PATTERNS.SETTER_BOOL) 
+    const SETTER_VAL = attribute.match(PATTERNS.SETTER_VAL)
+    const SETTER_BOOL = attribute.match(PATTERNS.SETTER_BOOL)
+    const FOR_LOOP = attribute.match(PATTERNS.FOR_LOOP) ? [
+        attribute.match(PATTERNS.FOR_LOOP)[1],
+        attribute.match(PATTERNS.FOR_LOOP)[2],
+        attribute.match(PATTERNS.FOR_LOOP)[3]
+    ] : null
+
     return {
         IN_QUOTES,
         IN_CURLY_BRACKETS,
@@ -32,11 +39,12 @@ export function getAttributePatterns(attribute: string) {
         IS_PLACEHOLDER,
         INSIDE_BRACKETS,
         INSIDE_CLASSID,
-        
+
         EVENT_NAME,
         ATTR_NAME,
         SETTER_BOOL,
-        SETTER_VAL
+        SETTER_VAL,
+        FOR_LOOP
     };
 }
 
@@ -47,7 +55,7 @@ export function getGeneralPatterns() {
     }
 }
 
-export function getExpression(input: string, header: string) { 
+export function getExpression(input: string, header: string) {
     const str = input.replace(header, '')
     return str.substring(1, str.length - 1)
 }

@@ -1,5 +1,5 @@
 import { capitaliseFirstLetter, decapitaliseFirstLetter } from "../utils"
-import { ASTNode, StarshipAttribute } from "./types";
+import { ASTNode, ForAttributesMode, StarshipAttribute } from "./types";
 import { getAttributePatterns } from "./utils";
 
 
@@ -18,7 +18,6 @@ export class StarshipTransformer {
 
     toJSX(): string {
         this.jsx = this.transformNodes(this.ast)
-        console.log(this.jsx)
         return this.jsx
     }
 
@@ -48,30 +47,69 @@ export class StarshipTransformer {
     }
 
     transformStarshipElements(node: ASTNode): string {
-        const openingTag = `${"    ".repeat(this.depth)}<${node.tagName} ${this.transformStarshipAttributes(node.tagName, node.attributes)}>`
+        const attributes = this.transformStarshipAttributes(node.tagName, node.attributes)
+        let openingTag: string
+        let childrenContent: string
         const closingTag = `</${node.tagName}>`
 
-        this.depth++
-        const childrenContent = this.transformNodes(node.children);
-        this.depth--
+        if (typeof attributes === 'string') {
+            openingTag = `${"    ".repeat(this.depth)}<${node.tagName}${attributes}>`
 
+            this.depth++
+            childrenContent = this.transformNodes(node.children)
+            this.depth--
+        } else {
+            // attribute is ForAttributesMode
+            if (node.tagName !== 'For') throw new Error('Invalid tag name for the given attribute(s)! The tag name must be For.')
+
+            openingTag = `${"    ".repeat(this.depth)}<${node.tagName}${attributes.display}>`
+
+            this.depth++
+            childrenContent = this.transformStarshipChildren(node, attributes.isRange, attributes.item)
+            this.depth--
+        }
         return `${openingTag}\n${childrenContent}${"    ".repeat(this.depth)}${closingTag}\n`
     }
 
-    transformStarshipAttributes(tagName: string, attributes: StarshipAttribute[]): string {
-        if (attributes.length !== 1) {
-            throw new Error('Special Starship tags must have exactly one attribute!')
-        }
-        // Enforce operator 1 === operator 2
+    transformStarshipAttributes(tagName: string, attributes: StarshipAttribute[]): string | ForAttributesMode {
+        // Enforce operator 1 === operator 2 for now
         if (tagName === 'Show') {
             const split = attributes[0].value.split(" ")
             const operator1 = split[0]
             const operand = split[1]
             if (operand !== '==' && operand !== '===') throw new Error('Invalid operand for <Show>!')
             const operator2 = split[2]
-            return `when={() => ${operator1}.value ${operand} ${operator2}.value}`
+            return ` when={() => ${operator1}.value ${operand} ${operator2}.value}`
         }
-        return ""
+        if (tagName === 'For') {
+            let str = ''
+            if (attributes.length !== 3) throw new Error('Invalid number of attributes for <For>!')
+            const each = attributes[0].value
+            const item = attributes[1].value
+            const range = attributes[2].value === 'range'
+            if (range) {
+                str += ` each={Array.from({ length: ${each}.value.length }, (_, ${item}) => ${item})} range={${range}}`
+            } else {
+                str += ` each={${each}.value} range={${range}}`
+            }
+            return {
+                display: str,
+                isRange: range,
+                item: item
+            }
+        } else {
+            throw new Error('Not a valid special Starship tag!')
+        }
+    }
+
+    transformStarshipChildren(node: ASTNode, isRange: boolean, item: string) {
+        let str: string = ''
+        if (isRange) {
+            str += `${"    ".repeat(this.depth)}{(${item}) => (<>${this.transformNodes(node.children)}${"    ".repeat(this.depth)}</>)}\n`
+        } else {
+            str += `${"    ".repeat(this.depth)}{(${item}, index) => (<>${this.transformNodes(node.children)}${"    ".repeat(this.depth)}</>)}\n`
+        }
+        return str
     }
 
     transformJSXElements(node: ASTNode): string {

@@ -113,7 +113,8 @@ export class StarshipTokeniser {
             IN_SQUARE_BRACKETS,
             INSIDE_CLASSID,
             EVENT_NAME,
-            ATTR_NAME
+            ATTR_NAME,
+            FOR_LOOP
         } = getAttributePatterns(attribute)
 
         const attributeNameValue = (name: string, value: string): StarshipAttribute => ({ name, value })
@@ -131,17 +132,26 @@ export class StarshipTokeniser {
                 const [width, height] = INSIDE_BRACKETS.split(',').map(dim => dim.trim());
                 return [attributeNameValue('width', width), attributeNameValue('height', height)];
             },
+            "loop": () => {
+                const [item, range, each] = FOR_LOOP
+                return [
+                    attributeNameValue('each', each),
+                    attributeNameValue('item', item),
+                    attributeNameValue('range', range)
+                ]
+            },
             "default": () => attributeNameValue(ATTR_NAME, getExpression(attribute, `${ATTR_NAME}=`))
 
             // TODO: Add more shortcuts
         }
 
-        if (attribute.startsWith("on:")) return [handlers["event"]()];
-        if (IS_PLACEHOLDER) return [handlers["placeholder"]()];
-        if (tag === 'img' && IN_SQUARE_BRACKETS) return handlers["imgSize"]();
-        if (tag === 'img' && IN_QUOTES) return [handlers["alt"]()];
-        if (IN_CURLY_BRACKETS && (tag === 'img' || tag === 'a')) return [handlers["srcOrHref"]()];
-        if (IN_CURLY_BRACKETS && (tag === 'button' || tag === 'input')) return [handlers["type"]()];
+        if (attribute.startsWith("on:")) return [handlers["event"]()]
+        if (FOR_LOOP) return handlers["loop"]()
+        if (IS_PLACEHOLDER) return [handlers["placeholder"]()]
+        if (tag === 'img' && IN_SQUARE_BRACKETS) return handlers["imgSize"]()
+        if (tag === 'img' && IN_QUOTES) return [handlers["alt"]()]
+        if (IN_CURLY_BRACKETS && (tag === 'img' || tag === 'a')) return [handlers["srcOrHref"]()]
+        if (IN_CURLY_BRACKETS && (tag === 'button' || tag === 'input')) return [handlers["type"]()]
         if (IN_CURLY_BRACKETS && tag === 'label') return [handlers["for"]()]
 
         // Symbol-based attributes for classes or IDs
