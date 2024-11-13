@@ -8,13 +8,8 @@ export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
   }
 
   if (typeof tag === 'function') {
-    console.log("hui")
-    console.log(tag)
     return tag({ ...props, children });
   }
-
-  console.log(tag)
-
   const element = document.createElement(tag);
 
   if (props) {
@@ -28,15 +23,10 @@ export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
       }
     }
   }
-
-  console.log("here")
   function appendChild(child: any) {
     if (child == null || child === false) return
 
-    console.log("inside appendCHIld")
-
     if (Array.isArray(child)) {
-      console.log("here now")
       child.forEach(appendChild) // recursive
 
     } else if (isSignal(child)) {
@@ -45,20 +35,15 @@ export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
       child.signal.sentry.assign(child.signal.id, () => textNode.textContent = child.value)
 
     } else if (typeof child === 'function') {
-      console.log("hi")
       const result = child()
       appendChild(result)
 
     } else if (child instanceof Node) {
-      console.log("node")
       element.appendChild(child)
 
     } else {
-      console.log("else")
       element.appendChild(document.createTextNode(child.toString()))
     }
-
-    console.log("nothing")
   }
 
   children.flat().forEach(appendChild)
@@ -174,13 +159,14 @@ export function For(props: {
   children: (itemOrIndex: any, index: number) => any
 }): DocumentFragment {
 
-  console.log("here")
   // Hold all generated element
   const container = document.createDocumentFragment()
 
   if (props.range) {
     console.log("HERE:", props)
+
   }
+  console.log(props)
 
   return container
 }

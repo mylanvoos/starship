@@ -89,9 +89,9 @@ export class StarshipTransformer {
             const item = attributes[1].value
             const range = attributes[2].value === 'range'
             if (range) {
-                str += ` each={Array.from({ length: ${each} }, (_, ${item}) => ${item})} range={${range}}`
+                str += ` each={Array.from({ length: ${each}.value.length }, (_, ${item}) => ${item})} range={${range}}`
             } else {
-                str += ` each={${each}} range={${range}}`
+                str += ` each={${each}.value} range={${range}}`
             }
             return {
                 display: str,

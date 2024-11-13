@@ -41,6 +41,10 @@ const { counter, message, voyagerThreshold, signal3 } = createSignals({
   ]
 })
 
+const arr = Array.from({ length: signal3.value.length }, (_, index) => index)
+
+console.log(arr)
+
 attachToCounter(() => setMessage(counter, [
   [ when(v => v > 10 || v < -10), effect(() => {
     setCounter(0)
