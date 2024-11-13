@@ -1,5 +1,5 @@
 import { SignalGuard } from "../reactivity/signal";
-import { getCurrentComputation, isSignal, setCurrentComputation } from "../reactivity/store";
+import { isSignal, setCurrentComputation } from "../reactivity/store";
 
 export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
   if (tag instanceof Node) {
@@ -8,8 +8,12 @@ export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
   }
 
   if (typeof tag === 'function') {
+    console.log("hui")
+    console.log(tag)
     return tag({ ...props, children });
   }
+
+  console.log(tag)
 
   const element = document.createElement(tag);
 
@@ -25,10 +29,14 @@ export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
     }
   }
 
+  console.log("here")
   function appendChild(child: any) {
     if (child == null || child === false) return
 
+    console.log("inside appendCHIld")
+
     if (Array.isArray(child)) {
+      console.log("here now")
       child.forEach(appendChild) // recursive
 
     } else if (isSignal(child)) {
@@ -37,15 +45,20 @@ export function h(tag: any, props?: any, ...children: any[]): HTMLElement {
       child.signal.sentry.assign(child.signal.id, () => textNode.textContent = child.value)
 
     } else if (typeof child === 'function') {
+      console.log("hi")
       const result = child()
       appendChild(result)
 
     } else if (child instanceof Node) {
+      console.log("node")
       element.appendChild(child)
 
     } else {
+      console.log("else")
       element.appendChild(document.createTextNode(child.toString()))
     }
+
+    console.log("nothing")
   }
 
   children.flat().forEach(appendChild)
@@ -136,6 +149,38 @@ export function Show(props: { when: (() => boolean) | SignalGuard<boolean>; chil
   return container
 }
 
-export function For(props: { key: string; in: string }): Comment {
-  return
+/**
+ * Looping over elements in array
+ * <For each={signal3}>
+    {(item, index) => (
+      <div>
+        Item {index}: {item}
+      </div>
+    )}
+ * </For>
+ * 
+ * Looping over a range of indices
+ * <For each={Array.from({ length: signal3 }, (_, index) => index)} range={true}>
+    {(index) => (
+      <div>
+        Index: {index}
+      </div>
+    )}
+ * </For>
+ */
+export function For<T>(props: {
+  each: any[]
+  range?: boolean; // if <For {item}:in:{array}> or <For {index}:range:{array.length}>
+  children: (itemOrIndex: any, index: number) => any
+}): DocumentFragment {
+
+  console.log("here")
+  // Hold all generated element
+  const container = document.createDocumentFragment()
+
+  if (props.range) {
+    console.log("HERE:", props)
+  }
+
+  return container
 }

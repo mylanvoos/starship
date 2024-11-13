@@ -15,14 +15,30 @@
 <Show when={counter === voyagerThreshold}>
     Hi
 </Show>
+<For {signal}:range:{signal3}>
+    indices
+</For>
+<For {signal}:in:{signal3}>
+    elements
+</For>
 
 <script>
 import Child from './Child.uss'
 
-const { counter, message, voyagerThreshold } = createSignals({
+const { counter, message, voyagerThreshold, signal3 } = createSignals({
   _counter: 0,
   message: "",
-  voyagerThreshold: 5
+  voyagerThreshold: 5,
+  signal3: [
+    {
+      id: "hi",
+      name: "Hello world"
+    },
+    {
+      id: "hello",
+      name: "Hi world"
+    }
+  ]
 })
 
 attachToCounter(() => setMessage(counter, [

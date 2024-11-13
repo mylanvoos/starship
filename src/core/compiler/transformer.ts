@@ -48,29 +48,45 @@ export class StarshipTransformer {
     }
 
     transformStarshipElements(node: ASTNode): string {
-        const openingTag = `${"    ".repeat(this.depth)}<${node.tagName} ${this.transformStarshipAttributes(node.tagName, node.attributes)}>`
+        const openingTag = `${"    ".repeat(this.depth)}<${node.tagName}${this.transformStarshipAttributes(node.tagName, node.attributes)}>`
         const closingTag = `</${node.tagName}>`
 
         this.depth++
-        const childrenContent = this.transformNodes(node.children);
+        const childrenContent = this.transformStarshipChildren(node);
         this.depth--
 
         return `${openingTag}\n${childrenContent}${"    ".repeat(this.depth)}${closingTag}\n`
     }
 
     transformStarshipAttributes(tagName: string, attributes: StarshipAttribute[]): string {
-        if (attributes.length !== 1) {
-            throw new Error('Special Starship tags must have exactly one attribute!')
-        }
-        // Enforce operator 1 === operator 2
+        let str = ''
+        // Enforce operator 1 === operator 2 for now
         if (tagName === 'Show') {
             const split = attributes[0].value.split(" ")
             const operator1 = split[0]
             const operand = split[1]
             if (operand !== '==' && operand !== '===') throw new Error('Invalid operand for <Show>!')
             const operator2 = split[2]
-            return `when={() => ${operator1}.value ${operand} ${operator2}.value}`
+            str = ` when={() => ${operator1}.value ${operand} ${operator2}.value}`
         }
+        if (tagName === 'For') {
+            if (attributes.length !== 3) throw new Error('Invalid number of attributes for <For>!')
+            for (const attr of attributes) {
+                console.log(attr)
+                if (attr.value === 'range') {
+                    str += ` ${attr.name}={true}`
+                } else if (attr.value === 'in') {
+                    str += ` ${attr.name}={false}`
+                } else {
+                    str += ` ${attr.name}={${attr.value}}`
+                }
+            }
+        }
+        console.log(str)
+        return str
+    }
+
+    transformStarshipChildren(node: ASTNode) {
         return ""
     }
 
