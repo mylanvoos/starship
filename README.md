@@ -12,10 +12,9 @@
   <button on:click={setVoyagerThreshold(counter)}> Set Voyager activation code </button>
   <p "#text">{ message }</p>
 </div>
-<div ".container2">
+<Show when={counter === voyagerThreshold}>
   <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} "NASA Voyager" [450,250] />
-  <a {../link}>This is a link</a>
-</div>
+</Show>
 ```
 ```typescript
 <script>
@@ -107,12 +106,28 @@ attachToCounter(() => setMessage(counter.value, [
 ```
 
 ### Conditional rendering with `<Show when={...}>`
-The <Show> component in Starship lets you render elements based on conditions in a simple, readable way. It renders the content inside <Show> only when the when condition is met
+The <Show> element in Starship lets you render elements based on conditions in a simple, readable way. It renders the content inside <Show> only when the when condition is met. Currently, the compiler enforces the rule that the expression inside `when` must be an equality comparison between two signals.
 
 ```jsx
 <Show when={voyagerThreshold === counter}>
   <img {https://science.nasa.gov/wp-content/uploads/2024/03/voyager-record-diagram.jpeg} />
 </Show>
 ```
-
 "Show the Voyager record image when the `voyager` evaluates to true!"
+
+### Looping with `<For {...}>`
+You can loop over a signal containing an array with the <For> element. 
+
+```jsx
+<For {signal}:in:{signals}>
+  {signal.name}
+</For>
+```
+
+You can also loop over the indices of said array. The Starship compiler will interpret this as the length of the array instead of the array itself. To loop over the elements of a numeric array, use `<For {...}:in:{...}>` instead.
+
+```jsx
+<For {index}:range:{signals}>
+  {index}
+</For>
+```
