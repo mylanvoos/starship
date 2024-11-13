@@ -1,14 +1,14 @@
 const PATTERNS = {
-    TEXT_TAGS: /<\/?(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|([^<>]+)/g, // Matches tags and text
-    TAGS: /<(\w+)((?:[^"'>{}]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|{(?:\\.|[^}\\])*})*?)>|<\/(\w+)>/, // Matches opening and closing tags
+    TEXT_TAGS: /<\/?(\w+)((?:[^"'`>]|"[^"]*"|'[^']*'|`[^`]*`|\{(?:\${[^}]*}|[^}]*)\})*?)>|([^<>]+)/g, // Matches tags and text
+    TAGS: /<(\w+)((?:[^"'`>]|"[^"]*"|'[^']*'|`[^`]*`|\{(?:\${[^}]*}|[^}]*)\})*?)>|<\/(\w+)>/, // Matches opening and closing tags
 
-    QUOTES: /^(['"])(.*)\1$/,                // Matches text wrapped in single or double quotes
+    QUOTES: /^(['"`])(.*)\1$/,                // Matches text wrapped in single or double quotes
     CURLY_BRACKETS: /^{(.*)}$/,              // Matches text wrapped in curly braces (special shortcuts)
     SQUARE_BRACKETS: /^\[(.*)]$/,            // Matches text wrapped in square brackets
-    PLACEHOLDER: /^@(['"])(.*)\1$/,                       // Matches text starting with '@'
+    PLACEHOLDER: /^@(['"`])(.*)\1$/,                       // Matches text starting with '@'
     EVENT_NAME: /on:([^=]+)=/,
     ATTR_NAME: /([^=]+)=/,
-    SETTER_VAL: /set([A-Z][a-zA-Z0-9]*)\(([-+]|''|""|)(\d+|\w+|\([^()]*\))\)/, // Matches setter shortcuts
+    SETTER_VAL: /set([A-Z][a-zA-Z0-9]*)\(([-+]|''|""|``|)(\d+|\w+|\([^()]*\))\)/, // Matches setter shortcuts
     SETTER_BOOL: /set([A-Z][a-zA-Z0-9]*)\(!\)/,
     FOR_LOOP: /^{([^}]+)}:(in|range):{([^}]+)}$/
 }

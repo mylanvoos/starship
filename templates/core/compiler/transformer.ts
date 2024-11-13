@@ -141,7 +141,7 @@ export class StarshipTransformer {
                 const variableName = decapitaliseFirstLetter(SETTER_BOOL[1])
                 attr.value = `() => set${capitaliseFirstLetter(variableName)}(!${variableName}.value)`
             }
-            strArray.push(attr.name.includes("on") ? ` ${attr.name}={${attr.value}}` : ` ${attr.name}="${attr.value}"`)
+            strArray.push(attr.name.includes("on") ? ` ${attr.name}={${attr.value}}` : attr.value.includes('${') ? ` ${attr.name}={\`${attr.value}\`}` : ` ${attr.name}="${attr.value}"`)
         }
         return strArray.join('')
     }

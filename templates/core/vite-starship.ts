@@ -44,7 +44,7 @@ export default function Component() {
 }
         `
 
-        // console.log(code)
+        console.log(code)
         const result = await esbuildTransform(code, {
           loader: 'tsx',
           sourcemap: true,

@@ -39,6 +39,8 @@ export class StarshipTokeniser {
 
                 const { tagType, isClosing, attributes } = this.processTag(tagContent)
 
+                console.log("AT TOKEN:", tagType, attributes)
+
                 this.tokens.push({
                     type: tagType,
                     isClosing: isClosing,
@@ -78,6 +80,7 @@ export class StarshipTokeniser {
          *  Matching opening tags will make match[1] defined 
          *  Matching closing text will make match[3] defined
          */
+
         while ((match = TAGS.exec(input)) !== null) {
             if (match[1]) {
                 const tagName = match[1]
@@ -88,6 +91,7 @@ export class StarshipTokeniser {
                 const attributeSet = splitAttributes(attributes) ? new Set<StarshipAttribute>(
                     splitAttributes(attributes)
                         .flatMap(attr => this.processAttribute(tagName, attr))) : null
+
                 return {
                     tagType: tagName,
                     isClosing: false,
