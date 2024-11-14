@@ -152,7 +152,14 @@ export function range<T>(from: T, to: T, step?: (value: T) => T): Array<T> {
     let current = from
     const stepFunction = step ? step : getStepFunction(from, to)
 
-    while (!Object.is(current, to)) {
+    const isOvershooting = (current: T, to: T, from: T): boolean => {
+        if (typeof current === 'number' || typeof current === 'string' || current instanceof Date) {
+            return (from < to && current > to) || (from > to && current < to)
+        }
+        throw new Error('Overshoot check not implemented for this type')
+    }
+
+    while (!Object.is(current, to) && !isOvershooting(current, to, from)) {
         result.push(current)
         current = stepFunction(current)
         if (Object.is(current, from)) {
@@ -160,7 +167,7 @@ export function range<T>(from: T, to: T, step?: (value: T) => T): Array<T> {
         }
     }
 
-    result.push(to)
+    if (!isOvershooting(current, to, from)) result.push(to)
     return result
 }
 

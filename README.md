@@ -25,14 +25,61 @@ const { counter, message, voyagerThreshold } = createSignals({
 ```
 ### Pattern Matching
 
-Inspired by Rust, Starship introduces functional pattern matching for elegant state management:
+Inspired by Rust, Starship introduces functional pattern matching for elegant state management using the `match` function. 
 
 ```typescript
+// Signal setters support pattern matching out of the box
 attachToCounter(() => setMessage(counter, [
-  [ when(v => v > 10), effect("Value too high!") ],
-  [ when(v => v === 0), effect("Starting point") ],
-  [ _, effect("Default case") ]
+  [when(v => v > 10), "Value too high!"],
+  [when(v => v === 0), "Starting point"],
+  [when(v => range(2, 6).includes(v)), "Just alright"],
+  [_, "Default case"]
 ]))
+
+// Match objects and use RegEx!
+const objResult = match({ x: 1, y: "hello" }, [
+    [{ x: when(n => n > 0), y: /^h/ }, "Matched!"],
+    [_, "No match"]
+])
+
+const person = { name: "Alice", age: 30 };
+const greeting = match(person, [
+    [{ name: "Alice" }, "Hello, Alice!"],
+    [{ age: when(n => n >= 18) }, "Hello, Adult!"],
+    [_, "Hello, Stranger!"]
+]);
+
+```
+
+The `range` function allows quick creation of arrays for various data types.
+
+```typescript
+const numberRange = range(1, 5)
+// Output: [1, 2, 3, 4, 5]
+
+const charRange = range('a', 'e');
+// Output: ['a', 'b', 'c', 'd', 'e']
+
+const startDate = new Date(2023, 0, 1);
+const endDate = new Date(2023, 0, 5);
+const dates = range(startDate, endDate);
+// Output:
+// Sun Jan 01 2023
+// Mon Jan 02 2023
+// Tue Jan 03 2023
+// Wed Jan 04 2023
+// Thu Jan 05 2023
+```
+
+`range` is intelligent about ordering and supports custom steps:
+
+```typescript
+const reverseNumberRange = range(5, 1)
+// Output: [5, 4, 3, 2, 1]
+
+const customRange = range(1, 10, (n) => n + 3)
+// Output: [1, 4, 7, 10]
+
 ```
 ### Ergonomic Template Syntax
 Starship organises components using a familiar three-section, single-file component structure similar to Vue (although you do not need to declare the `<template>` section!)
