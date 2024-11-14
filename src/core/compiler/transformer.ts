@@ -75,11 +75,20 @@ export class StarshipTransformer {
         // Enforce operator 1 === operator 2 for now
         if (tagName === 'Show') {
             const split = attributes[0].value.split(" ")
-            const operator1 = split[0]
-            const operand = split[1]
-            if (operand !== '==' && operand !== '===') throw new Error('Invalid operand for <Show>!')
-            const operator2 = split[2]
-            return ` when={() => ${operator1}.value ${operand} ${operator2}.value}`
+            if (split.length === 3) {
+                const operator1 = split[0]
+                const operand = split[1]
+                if (operand !== '==' && operand !== '===') throw new Error('Invalid operand for <Show>!')
+                const operator2 = split[2]
+                return ` when={() => ${operator1}.value ${operand} ${operator2}.value}`
+            }
+            if (split.length === 1) {
+                const operator = split[0]
+                if (operator.includes("!")) {
+                    return ` when={() => ${operator.replace("!", "")}.value === false}`
+                }
+                return ` when={() => ${operator}.value === true}`
+            }
         }
         if (tagName === 'For') {
             let str = ''
