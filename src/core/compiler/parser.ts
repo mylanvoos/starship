@@ -14,10 +14,10 @@ export class StarshipParser extends Parser {
   private astString: string // nice JSON representation of the AST tree
 
   constructor(options: ParserOptions, source: string) {
-    super(options, source)
-    this.input = this.input.trim() // trim whitespaces
+    super(options, source) // trim whitespaces
 
     this.tokens = new StarshipTokeniser(source).getTokens()
+    console.log(this.tokens)
     this.currentTokenIndex = 0
     this.length = this.tokens.length
     this.ast = []
@@ -40,7 +40,7 @@ export class StarshipParser extends Parser {
       this.currentTokenIndex++
       return {
         type: 'Text',
-        content: token.content,
+        content: token.content.replaceAll(" ", "&nbsp;"),
         tagName: null,
         attributes: [],
         children: [],

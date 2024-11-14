@@ -1,0 +1,53 @@
+<script>
+function demonstrateBasicMatching() {
+    const number = 42
+
+    const result = match(number, [
+        [0, "zero"],
+        [1, "one"],
+        [when(n => n % 2 === 0), "even"],
+        [when(n => n % 2 === 1), "odd"],
+        [_, "impossible"] // Similar to Rust's _ wildcard
+    ])
+
+    console.log(result) // "even"
+}
+
+// ----- Option Type Matching (similar to Rust's Option enum) -----
+function findUserById(id: number): Option<string> {
+    const users = new Map([[1, "Alice"], [2, "Bob"]])
+    return users.has(id) ? some(users.get(id)!) : none
+}
+
+function demonstrateOptionMatching() {
+    const user1 = findUserById(1)
+    const user2 = findUserById(999)
+
+    // Similar to Rust's match on Option
+    const message1 = match(user1, [
+        [Some, ({value}) => `Found user: ${value}`],
+        [None, "User not found"],
+        [_, "Impossible"]
+    ])
+    console.log(message1) // "Found user: Alice"
+
+    // Pattern matching with guard clauses
+    const message2 = match(user1, [
+        [Some, when(({value}) => value.startsWith('A')), "Found user starting with A"],
+        [Some, "Found other user"],
+        [None, "No user"],
+        [_, "Impossible"]
+    ])
+    console.log(message2) // "Found user starting with A"
+}
+
+// ----- Result Type Matching (similar to Rust's Result enum) -----
+function divide(a: number, b: number): Result<number, string> {
+    return b === 0 ? err("division by zero") : ok(a / b)
+}
+
+console.log(divide(2,0))
+console.log(divide(3,1))
+demonstrateBasicMatching()
+demonstrateOptionMatching()
+</script>
