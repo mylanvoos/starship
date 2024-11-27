@@ -104,11 +104,11 @@ Starship implements a sophisticated reactivity system using Signals, protected b
 
 ```typescript
 // Individual signal creation
-const [counter, setCounter, attach] = createSignal(0)
+const [counter, setCounter, attachToCounter] = createSignal(0)
 
-// Batch signal creation with automatic setter/attacher generation
+// Batch signal creation with automatic setter generation
 const { counter, message, person } = createSignals({
-  _counter: 0,  // '_' prefix to skip attacher generation
+  _counter: 0,  // '_' prefix to opt-in to automatic attacher generation
   message: "",
   person: {
     name: "John Doe",
@@ -121,11 +121,11 @@ const { counter, message, person } = createSignals({
 Inspired by Rust, Starship introduces functional pattern matching for elegant state management using the `match` function. 
 
 ```typescript
-// Signal setters support pattern matching out of the box
+// Signal setters support pattern matching out of the box without the need to call `match`
 attachToCounter(() => setMessage(counter.value, [
-  [when(v => v > 10), "Value too high!"],
-  [when(v => v === 0), "Starting point"],
-  [when(v => range(2, 6).includes(v)), "Just alright"],
+  [ when(v => v > 10), "Value too high!"],
+  [ when(v => v === 0), "Starting point"],
+  [ when(v => range(2, 6).includes(v)), "Just alright"],
   [_, "Default case"]
 ]))
 
@@ -176,6 +176,8 @@ const customRange = range(1, 10, (n) => n + 3)
 ```
 ### Ergonomic Template Syntax
 Starship organises components using a familiar three-section, single-file component structure similar to Vue (although you do not need to declare the `<template>` section!)
+
+The compiler treats everything not inside the `<script>` or `<style>` sections as templating code.
 
 ```jsx
 {/* The minimal Starship app */}
@@ -254,7 +256,7 @@ Starship operates as a multi-stage compiler framework:
 
 
 ### Development Status
-Starship is currently under development. It's not recommended for production use. Current focus areas are:
+Starship is an experimental project made to delve a bit deeper into modern frontend frameworks and how they work. I might revisit it one day to work on the following features:
 
   - Better support for arrays and deep-nested objects
   - Better syntax design
